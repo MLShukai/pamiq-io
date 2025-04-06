@@ -26,6 +26,16 @@ class VideoCapture(ABC):
 
     @property
     @abstractmethod
+    def channels(self) -> int:
+        """Get the current number of color channels for the video frames.
+
+        Returns:
+            The number of color channels (e.g., 1 for grayscale, 3 for RGB/BGR, 4 for RGBA/BGRA).
+        """
+        ...
+
+    @property
+    @abstractmethod
     def width(self) -> int:
         """Get the current width of the video frames.
 
