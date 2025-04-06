@@ -4,17 +4,7 @@ import cv2
 import numpy as np
 import pytest
 
-from pamiq_io.vision.video_capture import OpenCVVideoCapture, VideoCapture
-
-
-class TestVideoCapture:
-    """Tests for the VideoCapture abstract base class."""
-
-    @pytest.mark.parametrize("method_name", ["read", "width", "height", "fps"])
-    def test_abstract_methods(self, method_name):
-        """Test that VideoCapture correctly defines expected abstract
-        methods."""
-        assert method_name in VideoCapture.__abstractmethods__
+from pamiq_io.vision.capture.opencv import OpenCVVideoCapture
 
 
 class TestOpenCVVideoCapture:

@@ -1,61 +1,13 @@
-"""This module provides video capture functionality for game-io."""
+"""This module provides OpenCV-based video capture implementation."""
 
 import logging
-from abc import ABC, abstractmethod
 from typing import override
 
 import cv2
 import numpy as np
 from numpy.typing import NDArray
 
-
-class VideoCapture(ABC):
-    """Abstract base class for video capture.
-
-    This class defines the interface for video capture implementations.
-    """
-
-    @abstractmethod
-    def read(self) -> NDArray[np.uint8]:
-        """Reads a frame from the video capture.
-
-        Returns:
-            The frame read from the video capture with shape (height, width, channels).
-
-        Raises:
-            RuntimeError: If the frame cannot be read.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def width(self) -> int:
-        """Get the current width of the video frames.
-
-        Returns:
-            The current width of the video frames.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def height(self) -> int:
-        """Get the current height of the video frames.
-
-        Returns:
-            The current height of the video frames.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def fps(self) -> float:
-        """Get the current frames per second (fps).
-
-        Returns:
-            The current frames per second (fps) of the video.
-        """
-        pass
+from .base import VideoCapture
 
 
 class OpenCVVideoCapture(VideoCapture):
