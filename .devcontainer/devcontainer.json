@@ -18,8 +18,7 @@
         "extensions": [
           "ms-python.python",
           "tamasfe.even-better-toml",
-          "ms-azuretools.vscode-docker",
-          "github.vscode-github-actions"
+          "ms-azuretools.vscode-docker"
         ]
       }
     },
