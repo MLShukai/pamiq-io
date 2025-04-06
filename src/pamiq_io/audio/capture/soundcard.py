@@ -18,10 +18,10 @@ class SoundcardAudioCapture(AudioCapture):
 
     Examples:
         >>> audio_capture = SoundcardAudioCapture(
-        ...     samplerate=44100,
+        ...     sample_rate=44100,
         ...     device_id=None,  # Uses default input device
         ...     frame_size=1024,
-        ...     blocksize=1024,
+        ...     block_size=1024,
         ...     channels=1
         ... )
         >>> audio_frames = audio_capture.read()
@@ -29,20 +29,20 @@ class SoundcardAudioCapture(AudioCapture):
 
     def __init__(
         self,
-        samplerate: int = 44100,
+        sample_rate: int = 44100,
         device_id: str | None = None,
         frame_size: int = 1024,
-        blocksize: int | None = None,
+        block_size: int | None = None,
         channels: int = 1,
     ) -> None:
         """Initializes an instance of SoundcardAudioCapture.
 
         Args:
-            samplerate: The desired sample rate in Hz.
+            sample_rate: The desired sample rate in Hz.
             device_id: The audio input device id to use. Can be device name
                 or None for default device.
             frame_size: Number of frames to read in each capture.
-            blocksize: Size of each audio block for the recorder.
+            block_size: Size of each audio block for the recorder.
                 If None, frame_size will be used.
             channels: Number of audio channels to capture (1 for mono, 2 for stereo).
 
@@ -59,8 +59,8 @@ class SoundcardAudioCapture(AudioCapture):
             raise RuntimeError(f"Failed to initialize audio device: {e}") from e
 
         self._frame_size = frame_size
-        self._blocksize = frame_size if blocksize is None else blocksize
-        self._samplerate = samplerate
+        self._block_size = frame_size if block_size is None else block_size
+        self._sample_rate = sample_rate
         self._channels = channels
 
         self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
@@ -68,14 +68,14 @@ class SoundcardAudioCapture(AudioCapture):
         # Open the recording stream
         try:
             self._stream = self._mic.recorder(
-                samplerate=samplerate, channels=channels, blocksize=self._blocksize
+                samplerate=sample_rate, channels=channels, blocksize=self._block_size
             )
             self._stream.__enter__()
         except Exception as e:
             raise RuntimeError(f"Failed to start audio capture: {e}") from e
 
         self.logger.info(
-            f"Initialized audio capture with samplerate={samplerate}, "
+            f"Initialized audio capture with sample_rate={sample_rate}, "
             f"channels={channels}, frame_size={frame_size}"
         )
 
@@ -87,7 +87,7 @@ class SoundcardAudioCapture(AudioCapture):
         Returns:
             The sample rate in Hz.
         """
-        return self._samplerate
+        return self._sample_rate
 
     @property
     @override
@@ -134,5 +134,6 @@ class SoundcardAudioCapture(AudioCapture):
             try:
                 self._stream.__exit__(None, None, None)
                 self.logger.debug("Audio stream closed")
-            except Exception as e:
-                self.logger.warning(f"Error closing audio stream: {e}")
+            except Exception:
+                self.logger.exception("Error closing audio stream.")
+                raise
