@@ -66,15 +66,12 @@ class SoundcardAudioCapture(AudioCapture):
         self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
 
         # Open the recording stream
-        try:
-            self._stream = self._mic.recorder(
-                samplerate=sample_rate, channels=channels, blocksize=self._block_size
-            )
-            self._stream.__enter__()
-        except Exception as e:
-            raise RuntimeError(f"Failed to start audio capture: {e}") from e
+        self._stream = self._mic.recorder(
+            samplerate=sample_rate, channels=channels, blocksize=self._block_size
+        )
+        self._stream.__enter__()
 
-        self.logger.info(
+        self.logger.debug(
             f"Initialized audio capture with sample_rate={sample_rate}, "
             f"channels={channels}, frame_size={frame_size}"
         )
