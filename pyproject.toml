@@ -7,7 +7,15 @@ authors = [
     { name = "Geson-anko", email = "59220704+Geson-anko@users.noreply.github.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "numpy>=2.2.4",
+    "opencv-python>=4.11.0.86",
+]
+
+[project.optional-dependencies]
+demo = [
+    "pillow>=11.1.0",
+]
 
 [build-system]
 requires = ["hatchling"]
