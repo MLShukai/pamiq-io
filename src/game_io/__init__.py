@@ -1,2 +1,3 @@
-def hello() -> str:
-    return "Hello from game-io!"
+from importlib import metadata
+
+__version__ = metadata.version(__name__.replace("_", "-"))

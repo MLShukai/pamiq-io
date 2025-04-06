@@ -17,7 +17,7 @@ format: ## Run pre-commit hooks
 	uv run pre-commit run -a
 
 test: ## Run pytest
-	uv run pytest
+	uv run pytest -v --cov
 
 type: ## Run pyright
 	uv run pyright

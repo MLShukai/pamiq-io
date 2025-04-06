@@ -20,5 +20,8 @@
         ]
       }
     },
+    "containerEnv": {
+      "PYRIGHT_PYTHON_FORCE_VERSION": "latest"
+    },
     "shutdownAction": "stopContainer"
 }
