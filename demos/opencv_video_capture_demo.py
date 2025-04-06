@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from game_io.vision import OpenCVVideoCapture
+from pamiq_io.vision import OpenCVVideoCapture
 
 
 def setup_logging() -> None:

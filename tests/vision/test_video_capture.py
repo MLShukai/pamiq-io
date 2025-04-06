@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import pytest
 
-from game_io.vision.video_capture import OpenCVVideoCapture, VideoCapture
+from pamiq_io.vision.video_capture import OpenCVVideoCapture, VideoCapture
 
 
 class TestVideoCapture:

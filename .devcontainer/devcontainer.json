@@ -1,10 +1,10 @@
 {
-    "name": "game-io",
+    "name": "pamiq-io",
     "build": {
       "context": "../",
       "dockerfile": "./Dockerfile"
     },
-    "workspaceMount": "source=game-io,target=/workspace,type=volume",
+    "workspaceMount": "source=pamiq-io,target=/workspace,type=volume",
     "workspaceFolder": "/workspace",
     "mounts": [
       "source=uv-cache,target=/root/.cache/uv,type=volume",
