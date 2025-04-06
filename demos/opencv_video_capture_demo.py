@@ -7,10 +7,8 @@ OpenCVVideoCapture and saving it as a PNG file using PIL.
 
 import argparse
 import logging
-import sys
 from pathlib import Path
 
-import cv2
 from PIL import Image
 
 from game_io.vision import OpenCVVideoCapture
@@ -61,7 +59,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main() -> int:
+def main() -> None:
     """Run the demo.
 
     Returns:
@@ -76,50 +74,33 @@ def main() -> int:
     # Ensure output directory exists
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    try:
-        logger.info(f"Initializing camera (index: {args.camera})")
-        logger.info(
-            f"Requested resolution: {args.width}x{args.height}, FPS: {args.fps}"
-        )
+    logger.info(f"Initializing camera (index: {args.camera})")
+    logger.info(f"Requested resolution: {args.width}x{args.height}, FPS: {args.fps}")
 
-        # Initialize the video capture
-        capture = OpenCVVideoCapture(
-            camera=args.camera,
-            width=args.width,
-            height=args.height,
-            fps=args.fps,
-        )
+    # Initialize the video capture
+    capture = OpenCVVideoCapture(
+        camera=args.camera,
+        width=args.width,
+        height=args.height,
+        fps=args.fps,
+    )
 
-        # Log actual camera parameters (might differ from requested)
-        logger.info(
-            f"Actual resolution: {capture.width}x{capture.height}, FPS: {capture.fps}"
-        )
+    # Log actual camera parameters (might differ from requested)
+    logger.info(
+        f"Actual resolution: {capture.width}x{capture.height}, FPS: {capture.fps}"
+    )
 
-        # Capture a single frame
-        logger.info("Capturing frame...")
-        frame = capture.read()
+    # Capture a single frame
+    logger.info("Capturing frame...")
+    frame = capture.read()
 
-        # Convert NumPy array to PIL Image and save
-        logger.info(f"Saving frame to {output_path}")
-        image = Image.fromarray(frame)
-        image.save(output_path, format="PNG")
+    # Convert NumPy array to PIL Image and save
+    logger.info(f"Saving frame to {output_path}")
+    image = Image.fromarray(frame)
+    image.save(output_path, format="PNG")
 
-        logger.info("Frame captured and saved successfully!")
-        return 0
-
-    except cv2.error as e:
-        logger.error(f"OpenCV error: {e}")
-        return 1
-    except RuntimeError as e:
-        logger.error(f"Runtime error: {e}")
-        return 1
-    except OSError as e:
-        logger.error(f"I/O error when saving image: {e}")
-        return 1
-    except Exception as e:
-        logger.exception(f"Unexpected error: {e}")
-        return 1
+    logger.info("Frame captured and saved successfully!")
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
