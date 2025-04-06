@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     make \
     libopencv-dev \
     libsndfile1 \
+    pulseaudio \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
