@@ -147,6 +147,12 @@ class OpenCVVideoCapture(VideoCapture):
                         f"Captured frame has {frame.shape[-1]} channels, but expected {self.expected_channels} channels."
                     )
 
+                # Convert BGR to RGB
+                if frame.shape[-1] == 3:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                elif frame.shape[-1] == 4:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2RGBA)
+
                 return np.asarray(frame, dtype=np.uint8, copy=False)
             else:
                 self.logger.warning(

@@ -66,25 +66,85 @@ class TestOpenCVVideoCapture:
         assert "Failed to set height" in caplog.text
         assert "Failed to set fps" in caplog.text
 
-    def test_read_success(self, mocker):
-        """Test successful frame read."""
+    def test_read_success_with_bgr_to_rgb_conversion(self, mocker):
+        """Test successful frame read with BGR to RGB conversion."""
         mock_camera = mocker.MagicMock()
-        # Create a fake frame with recognizable pattern
-        mock_frame = np.zeros((480, 640, 3), dtype=np.uint8)
 
-        # Make read return a 3-channel frame
-        mock_camera.read.return_value = (True, mock_frame)
+        # Create a simple BGR test pattern (Blue, Green, Red)
+        # Blue pixel (255, 0, 0) in BGR should become (0, 0, 255) in RGB
+        bgr_frame = np.zeros((1, 3, 3), dtype=np.uint8)
+        # First pixel: Blue in BGR (255, 0, 0)
+        bgr_frame[0, 0] = [255, 0, 0]
+        # Second pixel: Green in BGR (0, 255, 0)
+        bgr_frame[0, 1] = [0, 255, 0]
+        # Third pixel: Red in BGR (0, 0, 255)
+        bgr_frame[0, 2] = [0, 0, 255]
 
+        # Set up the mock to return our test frame
+        mock_camera.read.return_value = (True, bgr_frame)
+
+        # Create capture object with mock camera
         capture = OpenCVVideoCapture(camera=mock_camera)
+
+        # Get the frame with color conversion applied
         result = capture.read()
 
-        assert result.shape == (480, 640, 3)
+        # Verify color conversion: BGR to RGB
+        # Blue in BGR (255, 0, 0) should be Red in RGB (255, 0, 0)
+        assert result[0, 0, 0] == 0  # R channel (was B)
+        assert result[0, 0, 1] == 0  # G channel
+        assert result[0, 0, 2] == 255  # B channel (was R)
+
+        # Green stays the same in BGR and RGB
+        assert result[0, 1, 0] == 0  # R channel
+        assert result[0, 1, 1] == 255  # G channel
+        assert result[0, 1, 2] == 0  # B channel
+
+        # Red in BGR (0, 0, 255) should be Blue in RGB (0, 0, 255)
+        assert result[0, 2, 0] == 255  # R channel (was B)
+        assert result[0, 2, 1] == 0  # G channel
+        assert result[0, 2, 2] == 0  # B channel (was R)
+
+    def test_read_with_bgra_to_rgba_conversion(self, mocker):
+        """Test frame read with BGRA to RGBA conversion for 4-channel
+        images."""
+        mock_camera = mocker.MagicMock()
+
+        # Create a BGRA test pattern with alpha
+        bgra_frame = np.zeros((1, 2, 4), dtype=np.uint8)
+        # First pixel: Blue with full opacity in BGRA (255, 0, 0, 255)
+        bgra_frame[0, 0] = [255, 0, 0, 255]
+        # Second pixel: Transparent red in BGRA (0, 0, 255, 128)
+        bgra_frame[0, 1] = [0, 0, 255, 128]
+
+        mock_camera.read.return_value = (True, bgra_frame)
+
+        # Create capture object with 4 channels
+        capture = OpenCVVideoCapture(camera=mock_camera, channels=4)
+
+        # Get the frame with color conversion applied
+        result = capture.read()
+
+        # Verify BGRA to RGBA conversion
+        # Blue in BGRA should become Red in RGBA with preserved alpha
+        assert result[0, 0, 0] == 0  # R channel (was B)
+        assert result[0, 0, 1] == 0  # G channel
+        assert result[0, 0, 2] == 255  # B channel (was R)
+        assert result[0, 0, 3] == 255  # Alpha unchanged
+
+        # Red in BGRA should become Blue in RGBA with preserved alpha
+        assert result[0, 1, 0] == 255  # R channel (was B)
+        assert result[0, 1, 1] == 0  # G channel
+        assert result[0, 1, 2] == 0  # B channel (was R)
+        assert result[0, 1, 3] == 128  # Alpha unchanged
 
     def test_read_grayscale_success(self, mocker):
         """Test successful frame read for grayscale images."""
         mock_camera = mocker.MagicMock()
         # Create a grayscale frame (2D)
         mock_frame = np.zeros((480, 640), dtype=np.uint8)
+        # Add some values for testing
+        mock_frame[240, 320] = 128
 
         mock_camera.read.return_value = (True, mock_frame)
 
@@ -94,6 +154,8 @@ class TestOpenCVVideoCapture:
 
         # Check that shape is (height, width, 1) after processing
         assert result.shape == (480, 640, 1)
+        # Verify values are preserved
+        assert result[240, 320, 0] == 128
 
     def test_read_channel_mismatch_error(self, mocker):
         """Test channel mismatch error during frame read."""
