@@ -9,7 +9,7 @@ import argparse
 import logging
 from pathlib import Path
 
-import cv2
+from PIL import Image
 
 from pamiq_io.vision import OpenCVVideoCapture
 
@@ -96,7 +96,8 @@ def main() -> None:
 
     # Convert NumPy array to PIL Image and save
     logger.info(f"Saving frame to {output_path}")
-    cv2.imwrite(str(output_path), frame)
+    im = Image.fromarray(frame)
+    im.save(output_path, format="PNG")
 
     logger.info("Frame captured and saved successfully!")
 

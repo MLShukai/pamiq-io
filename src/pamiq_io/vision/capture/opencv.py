@@ -1,61 +1,13 @@
-"""This module provides video capture functionality for game-io."""
+"""This module provides OpenCV-based video capture implementation."""
 
 import logging
-from abc import ABC, abstractmethod
 from typing import override
 
 import cv2
 import numpy as np
 from numpy.typing import NDArray
 
-
-class VideoCapture(ABC):
-    """Abstract base class for video capture.
-
-    This class defines the interface for video capture implementations.
-    """
-
-    @abstractmethod
-    def read(self) -> NDArray[np.uint8]:
-        """Reads a frame from the video capture.
-
-        Returns:
-            The frame read from the video capture with shape (height, width, channels).
-
-        Raises:
-            RuntimeError: If the frame cannot be read.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def width(self) -> int:
-        """Get the current width of the video frames.
-
-        Returns:
-            The current width of the video frames.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def height(self) -> int:
-        """Get the current height of the video frames.
-
-        Returns:
-            The current height of the video frames.
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def fps(self) -> float:
-        """Get the current frames per second (fps).
-
-        Returns:
-            The current frames per second (fps) of the video.
-        """
-        pass
+from .base import VideoCapture
 
 
 class OpenCVVideoCapture(VideoCapture):
@@ -67,6 +19,7 @@ class OpenCVVideoCapture(VideoCapture):
         expected_width: Expected width of captured frame.
         expected_height: Expected height of captured frame.
         expected_fps: Expected FPS of capture.
+        expected_channels: Expected number of channels in captured frame.
 
     Examples:
         >>> cam = OpenCVVideoCapture(
@@ -74,6 +27,7 @@ class OpenCVVideoCapture(VideoCapture):
         ... width = 1280,
         ... height = 720,
         ... fps = 30,
+        ... channels = 3,
         ... )
         >>> frame = cam.read()
     """
@@ -84,6 +38,7 @@ class OpenCVVideoCapture(VideoCapture):
         width: int = 640,
         height: int = 480,
         fps: float = 30,
+        channels: int = 3,
         num_trials_on_read_failure: int = 10,
     ) -> None:
         """Initializes an instance of OpenCVVideoCapture.
@@ -93,6 +48,7 @@ class OpenCVVideoCapture(VideoCapture):
             width: The desired width of the video frames.
             height: The desired height of the video frames.
             fps: The desired frames per second (fps) of the video.
+            channels: The desired number of color channels (default is 3 for RGB/BGR).
             num_trials_on_read_failure: Number of trials on read failure.
         """
         if isinstance(camera, int):
@@ -104,6 +60,7 @@ class OpenCVVideoCapture(VideoCapture):
         self.expected_width = width
         self.expected_height = height
         self.expected_fps = fps
+        self.expected_channels = channels
 
         self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
         self.configure_camera()
@@ -125,6 +82,16 @@ class OpenCVVideoCapture(VideoCapture):
             or self.fps != self.expected_fps
         ):
             self.logger.warning(f"Failed to set fps to {self.expected_fps}.")
+
+    @property
+    @override
+    def channels(self) -> int:
+        """Get the expected number of color channels for the video frames.
+
+        Returns:
+            The number of color channels for the video frames.
+        """
+        return self.expected_channels
 
     @property
     @override
@@ -161,15 +128,31 @@ class OpenCVVideoCapture(VideoCapture):
         """Reads a frame from the video capture.
 
         Returns:
-            The frame read from the video capture with shape (height, width, 3).
+            The frame read from the video capture with shape (height, width, channels).
 
         Raises:
             RuntimeError: If the frame cannot be read after num_trials_on_read_failure attempts.
+            ValueError: If the captured frame's number of channels doesn't match the expected channels.
         """
         for i in range(self.num_trials_on_read_failure):
             ret, frame = self.camera.read()
             if ret:
-                # Convert BGR to RGB by default
+                # If the frame is grayscale (2D), add a channel dimension
+                if frame.ndim == 2:
+                    frame = np.expand_dims(frame, -1)
+
+                # Verify that the frame has the expected number of channels
+                if frame.shape[-1] != self.expected_channels:
+                    raise ValueError(
+                        f"Captured frame has {frame.shape[-1]} channels, but expected {self.expected_channels} channels."
+                    )
+
+                # Convert BGR to RGB
+                if frame.shape[-1] == 3:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                elif frame.shape[-1] == 4:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2RGBA)
+
                 return np.asarray(frame, dtype=np.uint8, copy=False)
             else:
                 self.logger.warning(
