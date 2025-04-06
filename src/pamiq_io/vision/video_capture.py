@@ -20,8 +20,7 @@ class VideoCapture(ABC):
         """Reads a frame from the video capture.
 
         Returns:
-            The frame read from the video capture with shape (height, width, 3).
-            NOTE: Frame channel format must be RGB.
+            The frame read from the video capture with shape (height, width, channels).
 
         Raises:
             RuntimeError: If the frame cannot be read.
@@ -171,7 +170,6 @@ class OpenCVVideoCapture(VideoCapture):
             ret, frame = self.camera.read()
             if ret:
                 # Convert BGR to RGB by default
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 return np.asarray(frame, dtype=np.uint8, copy=False)
             else:
                 self.logger.warning(
