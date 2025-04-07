@@ -247,7 +247,7 @@ class _Speaker(_SoundCard):
         self,
         samplerate: int,
         channels: int | list[int] = ...,
-        blocksize: int = ...,
+        blocksize: int | None = ...,
         exclusive_mode: bool = False,
     ) -> _Player:
         """Create Player for playing audio.
