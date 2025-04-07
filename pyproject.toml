@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 demo = [
     "pillow>=11.1.0",
+    "soundfile>=0.13.1",
 ]
 
 [build-system]
