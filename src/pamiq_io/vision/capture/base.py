@@ -52,7 +52,7 @@ class VideoCapture(ABC):
         Returns:
             The current height of the video frames.
         """
-        pass
+        ...
 
     @property
     @abstractmethod

@@ -23,7 +23,7 @@ class AudioCapture(ABC):
         Raises:
             RuntimeError: If the audio frames cannot be read.
         """
-        pass
+        ...
 
     @property
     @abstractmethod
@@ -33,7 +33,7 @@ class AudioCapture(ABC):
         Returns:
             The sample rate in Hz.
         """
-        pass
+        ...
 
     @property
     @abstractmethod
@@ -43,7 +43,7 @@ class AudioCapture(ABC):
         Returns:
             The number of audio channels (1 for mono, 2 for stereo, etc.).
         """
-        pass
+        ...
 
     @property
     @abstractmethod
@@ -53,4 +53,4 @@ class AudioCapture(ABC):
         Returns:
             The number of frames read in each capture.
         """
-        pass
+        ...
