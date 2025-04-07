@@ -326,7 +326,7 @@ class _Microphone(_SoundCard):
         self,
         samplerate: int,
         channels: int | list[int] = ...,
-        blocksize: int = ...,
+        blocksize: int | None = ...,
         exclusive_mode: bool = ...,
     ) -> _Recorder:
         """Create Recorder for recording audio.

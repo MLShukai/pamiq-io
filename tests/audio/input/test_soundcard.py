@@ -40,9 +40,7 @@ class TestSoundcardAudioInput:
     def test_init_default_device(self, mock_sc, mock_mic):
         """Tests initialization with default device."""
 
-        SoundcardAudioInput(
-            sample_rate=44100, frame_size=1024, block_size=512, channels=1
-        )
+        SoundcardAudioInput(sample_rate=44100, block_size=512, channels=1)
 
         # Check if default microphone was used
         mock_sc.default_microphone.assert_called_once()
@@ -56,7 +54,7 @@ class TestSoundcardAudioInput:
         """Tests initialization with a specific device ID."""
 
         SoundcardAudioInput(
-            sample_rate=48000, device_id="test_device", frame_size=2048, channels=2
+            sample_rate=48000, device_id="test_device", block_size=2048, channels=2
         )
 
         # Check if specified device was used
@@ -68,32 +66,19 @@ class TestSoundcardAudioInput:
             samplerate=48000, channels=2, blocksize=2048
         )
 
-    def test_block_size_defaults_to_frame_size(self, mock_sc, mock_mic):
-        """Tests that block_size defaults to frame_size when not specified."""
-
-        SoundcardAudioInput(sample_rate=44100, frame_size=1024)
-
-        # Verify that blocksize is set to frame_size
-        mock_mic.recorder.assert_called_once_with(
-            samplerate=44100, channels=1, blocksize=1024
-        )
-
     def test_property_getters(self, mock_sc):
         """Tests the property getter methods."""
 
         sample_rate = 48000
-        frame_size = 2048
         channels = 2
 
         capture = SoundcardAudioInput(
             sample_rate=sample_rate,
-            frame_size=frame_size,
             channels=channels,
         )
 
         # Test property getters
         assert capture.sample_rate == sample_rate
-        assert capture.frame_size == frame_size
         assert capture.channels == channels
 
     def test_read_success(self, mock_sc, mock_mic):
@@ -113,12 +98,11 @@ class TestSoundcardAudioInput:
         # Initialize audio input
         capture = SoundcardAudioInput(
             sample_rate=44100,
-            frame_size=test_frames,
             channels=test_channels,
         )
 
         # Read audio frames
-        result = capture.read()
+        result = capture.read(frame_size=test_frames)
 
         # Verify record was called with correct parameters
         recorder.record.assert_called_once_with(numframes=test_frames)
@@ -136,13 +120,13 @@ class TestSoundcardAudioInput:
         error_message = "Simulated audio read error"
         recorder.record.side_effect = Exception(error_message)
 
-        capture = SoundcardAudioInput(sample_rate=44100, frame_size=1024)
+        capture = SoundcardAudioInput(sample_rate=44100)
 
         # Attempt to read should raise RuntimeError
         with pytest.raises(
             RuntimeError, match=f"Failed to read audio frames:.*{error_message}"
         ):
-            capture.read()
+            capture.read(frame_size=1024)
 
         # Check that error was logged
         assert "Error reading audio frames:" in caplog.text

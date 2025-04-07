@@ -13,8 +13,11 @@ class AudioInput(ABC):
     """
 
     @abstractmethod
-    def read(self) -> NDArray[np.float32]:
+    def read(self, frame_size: int) -> NDArray[np.float32]:
         """Reads audio frames from the input stream.
+
+        Args:
+            frame_size: Number of frames to read.
 
         Returns:
             Audio data as a numpy array with shape (frame_size, channels)
@@ -23,7 +26,6 @@ class AudioInput(ABC):
         Raises:
             RuntimeError: If the audio frames cannot be read.
         """
-        ...
 
     @property
     @abstractmethod
@@ -42,15 +44,5 @@ class AudioInput(ABC):
 
         Returns:
             The number of audio channels (1 for mono, 2 for stereo, etc.).
-        """
-        ...
-
-    @property
-    @abstractmethod
-    def frame_size(self) -> int:
-        """Get the frame size of the audio input.
-
-        Returns:
-            The number of frames read in each input.
         """
         ...

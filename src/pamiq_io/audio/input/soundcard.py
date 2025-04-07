@@ -20,18 +20,16 @@ class SoundcardAudioInput(AudioInput):
         >>> audio_input = SoundcardAudioInput(
         ...     sample_rate=44100,
         ...     device_id=None,  # Uses default input device
-        ...     frame_size=1024,
         ...     block_size=1024,
         ...     channels=1
         ... )
-        >>> audio_frames = audio_input.read()
+        >>> audio_frames = audio_input.read(frame_size=1024)
     """
 
     def __init__(
         self,
         sample_rate: int = 44100,
         device_id: str | None = None,
-        frame_size: int = 1024,
         block_size: int | None = None,
         channels: int = 1,
     ) -> None:
@@ -41,9 +39,7 @@ class SoundcardAudioInput(AudioInput):
             sample_rate: The desired sample rate in Hz.
             device_id: The audio input device id to use. Can be device name
                 or None for default device.
-            frame_size: Number of frames to read in each input.
             block_size: Size of each audio block for the recorder.
-                If None, frame_size will be used.
             channels: Number of audio channels to input (1 for mono, 2 for stereo).
 
         Raises:
@@ -58,8 +54,6 @@ class SoundcardAudioInput(AudioInput):
         except Exception as e:
             raise RuntimeError(f"Failed to initialize audio device: {e}") from e
 
-        self._frame_size = frame_size
-        self._block_size = frame_size if block_size is None else block_size
         self._sample_rate = sample_rate
         self._channels = channels
 
@@ -67,13 +61,13 @@ class SoundcardAudioInput(AudioInput):
 
         # Open the recording stream
         self._stream = self._mic.recorder(
-            samplerate=sample_rate, channels=channels, blocksize=self._block_size
+            samplerate=sample_rate, channels=channels, blocksize=block_size
         )
         self._stream.__enter__()
 
         self.logger.debug(
             f"Initialized audio input with sample_rate={sample_rate}, "
-            f"channels={channels}, frame_size={frame_size}"
+            f"channels={channels}, block_size={block_size}"
         )
 
     @property
@@ -96,19 +90,12 @@ class SoundcardAudioInput(AudioInput):
         """
         return self._channels
 
-    @property
     @override
-    def frame_size(self) -> int:
-        """Get the frame size of the audio input.
-
-        Returns:
-            The number of frames read in each input.
-        """
-        return self._frame_size
-
-    @override
-    def read(self) -> NDArray[np.float32]:
+    def read(self, frame_size: int) -> NDArray[np.float32]:
         """Reads audio frames from the input stream.
+
+        Args:
+            frame_size: Number of frames to read.
 
         Returns:
             Audio data as a numpy array with shape (frame_size, channels)
@@ -118,7 +105,7 @@ class SoundcardAudioInput(AudioInput):
             RuntimeError: If the audio frames cannot be read.
         """
         try:
-            frames = self._stream.record(numframes=self._frame_size)
+            frames = self._stream.record(numframes=frame_size)
             return np.asarray(frames, dtype=np.float32)
         except Exception as e:
             self.logger.error(f"Error reading audio frames: {e}")
