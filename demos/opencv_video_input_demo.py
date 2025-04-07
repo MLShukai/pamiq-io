@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from pamiq_io.vision import OpenCVVideoInput
+from pamiq_io.video import OpenCVVideoInput
 
 
 def setup_logging() -> None:

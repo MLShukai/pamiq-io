@@ -1,6 +1,6 @@
 import pytest
 
-from pamiq_io.vision.input.base import VideoInput
+from pamiq_io.video.input.base import VideoInput
 
 
 class TestVideoInput:

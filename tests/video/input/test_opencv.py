@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import pytest
 
-from pamiq_io.vision.input.opencv import OpenCVVideoInput
+from pamiq_io.video.input.opencv import OpenCVVideoInput
 
 
 class TestOpenCVVideoInput:
