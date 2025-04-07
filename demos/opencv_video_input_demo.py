@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-"""Demo script for OpenCVVideoCapture.
+"""Demo script for OpenCVVideoInput.
 
 This script demonstrates capturing a single frame from a camera using
-OpenCVVideoCapture and saving it as a PNG file using PIL.
+OpenCVVideoInput and saving it as a PNG file using PIL.
 """
 
 import argparse
@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from pamiq_io.vision import OpenCVVideoCapture
+from pamiq_io.vision import OpenCVVideoInput
 
 
 def setup_logging() -> None:
@@ -77,8 +77,8 @@ def main() -> None:
     logger.info(f"Initializing camera (index: {args.camera})")
     logger.info(f"Requested resolution: {args.width}x{args.height}, FPS: {args.fps}")
 
-    # Initialize the video capture
-    capture = OpenCVVideoCapture(
+    # Initialize the video input
+    input_device = OpenCVVideoInput(
         camera=args.camera,
         width=args.width,
         height=args.height,
@@ -87,12 +87,12 @@ def main() -> None:
 
     # Log actual camera parameters (might differ from requested)
     logger.info(
-        f"Actual resolution: {capture.width}x{capture.height}, FPS: {capture.fps}"
+        f"Actual resolution: {input_device.width}x{input_device.height}, FPS: {input_device.fps}"
     )
 
     # Capture a single frame
     logger.info("Capturing frame...")
-    frame = capture.read()
+    frame = input_device.read()
 
     # Convert NumPy array to PIL Image and save
     logger.info(f"Saving frame to {output_path}")

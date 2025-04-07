@@ -1,4 +1,4 @@
-"""This module provides audio capture functionality for game-io."""
+"""This module provides audio input functionality for game-io."""
 
 import logging
 from typing import override
@@ -7,24 +7,24 @@ import numpy as np
 import soundcard as sc
 from numpy.typing import NDArray
 
-from .base import AudioCapture
+from .base import AudioInput
 
 
-class SoundcardAudioCapture(AudioCapture):
-    """Audio capture implementation using the Soundcard library.
+class SoundcardAudioInput(AudioInput):
+    """Audio input implementation using the Soundcard library.
 
     This class captures audio using the Soundcard library which provides
-    cross-platform audio capture capabilities.
+    cross-platform audio input capabilities.
 
     Examples:
-        >>> audio_capture = SoundcardAudioCapture(
+        >>> audio_input = SoundcardAudioInput(
         ...     sample_rate=44100,
         ...     device_id=None,  # Uses default input device
         ...     frame_size=1024,
         ...     block_size=1024,
         ...     channels=1
         ... )
-        >>> audio_frames = audio_capture.read()
+        >>> audio_frames = audio_input.read()
     """
 
     def __init__(
@@ -35,16 +35,16 @@ class SoundcardAudioCapture(AudioCapture):
         block_size: int | None = None,
         channels: int = 1,
     ) -> None:
-        """Initializes an instance of SoundcardAudioCapture.
+        """Initializes an instance of SoundcardAudioInput.
 
         Args:
             sample_rate: The desired sample rate in Hz.
             device_id: The audio input device id to use. Can be device name
                 or None for default device.
-            frame_size: Number of frames to read in each capture.
+            frame_size: Number of frames to read in each input.
             block_size: Size of each audio block for the recorder.
                 If None, frame_size will be used.
-            channels: Number of audio channels to capture (1 for mono, 2 for stereo).
+            channels: Number of audio channels to input (1 for mono, 2 for stereo).
 
         Raises:
             RuntimeError: If the specified device is not found or cannot be accessed.
@@ -72,14 +72,14 @@ class SoundcardAudioCapture(AudioCapture):
         self._stream.__enter__()
 
         self.logger.debug(
-            f"Initialized audio capture with sample_rate={sample_rate}, "
+            f"Initialized audio input with sample_rate={sample_rate}, "
             f"channels={channels}, frame_size={frame_size}"
         )
 
     @property
     @override
     def sample_rate(self) -> float:
-        """Get the current sample rate of the audio capture.
+        """Get the current sample rate of the audio input.
 
         Returns:
             The sample rate in Hz.
@@ -99,10 +99,10 @@ class SoundcardAudioCapture(AudioCapture):
     @property
     @override
     def frame_size(self) -> int:
-        """Get the frame size of the audio capture.
+        """Get the frame size of the audio input.
 
         Returns:
-            The number of frames read in each capture.
+            The number of frames read in each input.
         """
         return self._frame_size
 

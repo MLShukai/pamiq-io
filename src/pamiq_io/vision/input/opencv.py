@@ -1,4 +1,4 @@
-"""This module provides OpenCV-based video capture implementation."""
+"""This module provides OpenCV-based video input implementation."""
 
 import logging
 from typing import override
@@ -7,11 +7,11 @@ import cv2
 import numpy as np
 from numpy.typing import NDArray
 
-from .base import VideoCapture
+from .base import VideoInput
 
 
-class OpenCVVideoCapture(VideoCapture):
-    """Video capture implementation using OpenCV.
+class OpenCVVideoInput(VideoInput):
+    """Video input implementation using OpenCV.
 
     Attributes:
         camera: OpenCV VideoCapture.
@@ -22,7 +22,7 @@ class OpenCVVideoCapture(VideoCapture):
         expected_channels: Expected number of channels in captured frame.
 
     Examples:
-        >>> cam = OpenCVVideoCapture(
+        >>> cam = OpenCVVideoInput(
         ... camera = cv2.VideoCapture(0),  # Use default camera
         ... width = 1280,
         ... height = 720,
@@ -41,7 +41,7 @@ class OpenCVVideoCapture(VideoCapture):
         channels: int = 3,
         num_trials_on_read_failure: int = 10,
     ) -> None:
-        """Initializes an instance of OpenCVVideoCapture.
+        """Initializes an instance of OpenCVVideoInput.
 
         Args:
             camera: The OpenCV VideoCapture object or camera index to use.
@@ -125,10 +125,10 @@ class OpenCVVideoCapture(VideoCapture):
 
     @override
     def read(self) -> NDArray[np.uint8]:
-        """Reads a frame from the video capture.
+        """Reads a frame from the video input.
 
         Returns:
-            The frame read from the video capture with shape (height, width, channels).
+            The frame read from the video input with shape (height, width, channels).
 
         Raises:
             RuntimeError: If the frame cannot be read after num_trials_on_read_failure attempts.
@@ -156,7 +156,7 @@ class OpenCVVideoCapture(VideoCapture):
                 return np.asarray(frame, dtype=np.uint8, copy=False)
             else:
                 self.logger.warning(
-                    f"Failed to read capture frame, retrying ({i+1}/{self.num_trials_on_read_failure})..."
+                    f"Failed to read input frame, retrying ({i+1}/{self.num_trials_on_read_failure})..."
                 )
 
-        raise RuntimeError("Failed to read capture frame.")
+        raise RuntimeError("Failed to read input frame.")

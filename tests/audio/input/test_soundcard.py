@@ -1,4 +1,4 @@
-"""Tests for the SoundcardAudioCapture class."""
+"""Tests for the SoundcardAudioInput class."""
 
 import shutil
 import sys
@@ -15,11 +15,11 @@ if sys.platform == "linux":
             allow_module_level=True,
         )
 
-from pamiq_io.audio.capture.soundcard import SoundcardAudioCapture
+from pamiq_io.audio.input.soundcard import SoundcardAudioInput
 
 
-class TestSoundcardAudioCapture:
-    """Tests for the SoundcardAudioCapture class."""
+class TestSoundcardAudioInput:
+    """Tests for the SoundcardAudioInput class."""
 
     @pytest.fixture
     def mock_mic(self, mocker: MockerFixture):
@@ -32,7 +32,7 @@ class TestSoundcardAudioCapture:
     @pytest.fixture
     def mock_sc(self, mocker: MockerFixture, mock_mic):
         """Mocks the soundcard module and returns the mock setup."""
-        mock_sc = mocker.patch("pamiq_io.audio.capture.soundcard.sc")
+        mock_sc = mocker.patch("pamiq_io.audio.input.soundcard.sc")
         mock_sc.default_microphone.return_value = mock_mic
         mock_sc.get_microphone.return_value = mock_mic
         return mock_sc
@@ -40,7 +40,7 @@ class TestSoundcardAudioCapture:
     def test_init_default_device(self, mock_sc, mock_mic):
         """Tests initialization with default device."""
 
-        SoundcardAudioCapture(
+        SoundcardAudioInput(
             sample_rate=44100, frame_size=1024, block_size=512, channels=1
         )
 
@@ -55,7 +55,7 @@ class TestSoundcardAudioCapture:
     def test_init_specific_device(self, mock_sc, mock_mic):
         """Tests initialization with a specific device ID."""
 
-        SoundcardAudioCapture(
+        SoundcardAudioInput(
             sample_rate=48000, device_id="test_device", frame_size=2048, channels=2
         )
 
@@ -71,7 +71,7 @@ class TestSoundcardAudioCapture:
     def test_block_size_defaults_to_frame_size(self, mock_sc, mock_mic):
         """Tests that block_size defaults to frame_size when not specified."""
 
-        SoundcardAudioCapture(sample_rate=44100, frame_size=1024)
+        SoundcardAudioInput(sample_rate=44100, frame_size=1024)
 
         # Verify that blocksize is set to frame_size
         mock_mic.recorder.assert_called_once_with(
@@ -85,7 +85,7 @@ class TestSoundcardAudioCapture:
         frame_size = 2048
         channels = 2
 
-        capture = SoundcardAudioCapture(
+        capture = SoundcardAudioInput(
             sample_rate=sample_rate,
             frame_size=frame_size,
             channels=channels,
@@ -110,8 +110,8 @@ class TestSoundcardAudioCapture:
         recorder = mock_mic.recorder.return_value
         recorder.record.return_value = test_audio
 
-        # Initialize audio capture
-        capture = SoundcardAudioCapture(
+        # Initialize audio input
+        capture = SoundcardAudioInput(
             sample_rate=44100,
             frame_size=test_frames,
             channels=test_channels,
@@ -136,7 +136,7 @@ class TestSoundcardAudioCapture:
         error_message = "Simulated audio read error"
         recorder.record.side_effect = Exception(error_message)
 
-        capture = SoundcardAudioCapture(sample_rate=44100, frame_size=1024)
+        capture = SoundcardAudioInput(sample_rate=44100, frame_size=1024)
 
         # Attempt to read should raise RuntimeError
         with pytest.raises(
@@ -152,7 +152,7 @@ class TestSoundcardAudioCapture:
         recorder = mock_mic.recorder.return_value
 
         # Create and then delete the capture object
-        capture = SoundcardAudioCapture()
+        capture = SoundcardAudioInput()
 
         # Use mocker to spy on __exit__ method
         exit_spy = mocker.spy(recorder, "__exit__")
@@ -173,7 +173,7 @@ class TestSoundcardAudioCapture:
         )
 
         # Create capture object
-        capture = SoundcardAudioCapture()
+        capture = SoundcardAudioInput()
 
         # Deletion should raise the exception
         with pytest.raises(Exception, match="Stream close error"):

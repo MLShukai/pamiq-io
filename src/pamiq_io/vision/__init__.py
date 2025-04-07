@@ -1,5 +1,5 @@
 """Computer vision related utilities for pamiq-io."""
 
-from .capture import OpenCVVideoCapture, VideoCapture
+from .input import OpenCVVideoInput, VideoInput
 
-__all__ = ["VideoCapture", "OpenCVVideoCapture"]
+__all__ = ["VideoInput", "OpenCVVideoInput"]

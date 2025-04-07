@@ -1,4 +1,4 @@
-"""This module provides audio capture functionality for game-io."""
+"""This module provides audio input functionality for game-io."""
 
 from abc import ABC, abstractmethod
 
@@ -6,10 +6,10 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-class AudioCapture(ABC):
-    """Abstract base class for audio capture.
+class AudioInput(ABC):
+    """Abstract base class for audio input.
 
-    This class defines the interface for audio capture implementations.
+    This class defines the interface for audio input implementations.
     """
 
     @abstractmethod
@@ -28,7 +28,7 @@ class AudioCapture(ABC):
     @property
     @abstractmethod
     def sample_rate(self) -> float:
-        """Get the current sample rate of the audio capture.
+        """Get the current sample rate of the audio input.
 
         Returns:
             The sample rate in Hz.
@@ -48,9 +48,9 @@ class AudioCapture(ABC):
     @property
     @abstractmethod
     def frame_size(self) -> int:
-        """Get the frame size of the audio capture.
+        """Get the frame size of the audio input.
 
         Returns:
-            The number of frames read in each capture.
+            The number of frames read in each input.
         """
         ...

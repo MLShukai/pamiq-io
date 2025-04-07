@@ -1,4 +1,4 @@
-"""This module provides base classes for video capture functionality."""
+"""This module provides base classes for video input functionality."""
 
 from abc import ABC, abstractmethod
 
@@ -6,18 +6,18 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-class VideoCapture(ABC):
-    """Abstract base class for video capture.
+class VideoInput(ABC):
+    """Abstract base class for video input.
 
-    This class defines the interface for video capture implementations.
+    This class defines the interface for video input implementations.
     """
 
     @abstractmethod
     def read(self) -> NDArray[np.uint8]:
-        """Reads a frame from the video capture.
+        """Reads a frame from the video input.
 
         Returns:
-            The frame read from the video capture with shape (height, width, channels).
+            The frame read from the video input with shape (height, width, channels).
 
         Raises:
             RuntimeError: If the frame cannot be read.

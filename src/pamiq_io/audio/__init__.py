@@ -1,3 +1,3 @@
-from .capture import AudioCapture, SoundcardAudioCapture
+from .input import AudioInput, SoundcardAudioInput
 
-__all__ = ["AudioCapture", "SoundcardAudioCapture"]
+__all__ = ["AudioInput", "SoundcardAudioInput"]

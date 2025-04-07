@@ -1,14 +1,14 @@
-"""Tests for video_capture module."""
+"""Tests for video_input module."""
 
 import cv2
 import numpy as np
 import pytest
 
-from pamiq_io.vision.capture.opencv import OpenCVVideoCapture
+from pamiq_io.vision.input.opencv import OpenCVVideoInput
 
 
-class TestOpenCVVideoCapture:
-    """Tests for OpenCVVideoCapture class."""
+class TestOpenCVVideoInput:
+    """Tests for OpenCVVideoInput class."""
 
     def test_init_with_camera_index(self, mocker):
         """Test initialization with camera index."""
@@ -20,7 +20,7 @@ class TestOpenCVVideoCapture:
             cv2.CAP_PROP_FPS: 30,
         }[prop]
 
-        capture = OpenCVVideoCapture(camera=0)
+        capture = OpenCVVideoInput(camera=0)
 
         mock_camera.assert_called_once_with(index=0)
         assert capture.width == 640
@@ -38,7 +38,7 @@ class TestOpenCVVideoCapture:
             cv2.CAP_PROP_FPS: 60,
         }[prop]
 
-        capture = OpenCVVideoCapture(
+        capture = OpenCVVideoInput(
             camera=mock_camera, width=1280, height=720, fps=60, channels=4
         )
 
@@ -59,7 +59,7 @@ class TestOpenCVVideoCapture:
             cv2.CAP_PROP_FPS: 15,  # Different from expected 30
         }[prop]
 
-        OpenCVVideoCapture(camera=mock_camera)
+        OpenCVVideoInput(camera=mock_camera)
 
         # Check if warnings were logged
         assert "Failed to set width" in caplog.text
@@ -84,7 +84,7 @@ class TestOpenCVVideoCapture:
         mock_camera.read.return_value = (True, bgr_frame)
 
         # Create capture object with mock camera
-        capture = OpenCVVideoCapture(camera=mock_camera)
+        capture = OpenCVVideoInput(camera=mock_camera)
 
         # Get the frame with color conversion applied
         result = capture.read()
@@ -120,7 +120,7 @@ class TestOpenCVVideoCapture:
         mock_camera.read.return_value = (True, bgra_frame)
 
         # Create capture object with 4 channels
-        capture = OpenCVVideoCapture(camera=mock_camera, channels=4)
+        capture = OpenCVVideoInput(camera=mock_camera, channels=4)
 
         # Get the frame with color conversion applied
         result = capture.read()
@@ -149,7 +149,7 @@ class TestOpenCVVideoCapture:
         mock_camera.read.return_value = (True, mock_frame)
 
         # Set to expect 1 channel
-        capture = OpenCVVideoCapture(camera=mock_camera, channels=1)
+        capture = OpenCVVideoInput(camera=mock_camera, channels=1)
         result = capture.read()
 
         # Check that shape is (height, width, 1) after processing
@@ -166,7 +166,7 @@ class TestOpenCVVideoCapture:
         mock_camera.read.return_value = (True, mock_frame)
 
         # Set to expect 1 channel, which doesn't match the frame
-        capture = OpenCVVideoCapture(camera=mock_camera, channels=1)
+        capture = OpenCVVideoInput(camera=mock_camera, channels=1)
 
         with pytest.raises(
             ValueError, match=r"Captured frame has 3 channels, but expected 1 channels"
@@ -178,13 +178,13 @@ class TestOpenCVVideoCapture:
         mock_camera = mocker.MagicMock()
         mock_camera.read.return_value = (False, None)  # Always fail
 
-        capture = OpenCVVideoCapture(camera=mock_camera, num_trials_on_read_failure=3)
+        capture = OpenCVVideoInput(camera=mock_camera, num_trials_on_read_failure=3)
 
-        with pytest.raises(RuntimeError, match="Failed to read capture frame"):
+        with pytest.raises(RuntimeError, match="Failed to read input frame"):
             capture.read()
 
         assert mock_camera.read.call_count == 3
         # Check that debug messages were logged for each retry
-        assert "Failed to read capture frame, retrying (1/3)" in caplog.text
-        assert "Failed to read capture frame, retrying (2/3)" in caplog.text
-        assert "Failed to read capture frame, retrying (3/3)" in caplog.text
+        assert "Failed to read input frame, retrying (1/3)" in caplog.text
+        assert "Failed to read input frame, retrying (2/3)" in caplog.text
+        assert "Failed to read input frame, retrying (3/3)" in caplog.text
