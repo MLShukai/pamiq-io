@@ -67,18 +67,12 @@ class SoundcardAudioOutput(AudioOutput):
                 or None for default device.
             block_size: Size of each audio block for the player.
             channels: Number of audio channels to output (1 for mono, 2 for stereo).
-
-        Raises:
-            RuntimeError: If the specified device is not found or cannot be accessed.
         """
         # Get the speaker device
-        try:
-            if device_id is None:
-                self._speaker = sc.default_speaker()
-            else:
-                self._speaker = sc.get_speaker(device_id)
-        except Exception as e:
-            raise RuntimeError(f"Failed to initialize audio device: {e}") from e
+        if device_id is None:
+            self._speaker = sc.default_speaker()
+        else:
+            self._speaker = sc.get_speaker(device_id)
 
         self._sample_rate = sample_rate
         self._channels = channels
@@ -125,39 +119,30 @@ class SoundcardAudioOutput(AudioOutput):
                 and values normalized between -1.0 and 1.0.
 
         Raises:
-            RuntimeError: If the audio frames cannot be written.
             ValueError: If the data shape is incompatible with the configured channels.
         """
-        try:
-            # Ensure data is float32
-            data = np.asarray(data, dtype=np.float32)
+        # Ensure data is float32
+        data = np.asarray(data, dtype=np.float32)
 
-            # Check shape compatibility
-            if data.ndim == 1:
-                # Single channel data, reshape to (frames, 1)
-                data = data.reshape(-1, 1)
+        # Check shape compatibility
+        if data.ndim == 1:
+            # Single channel data, reshape to (frames, 1)
+            data = data.reshape(-1, 1)
 
-            if data.ndim != 2:
-                raise ValueError(f"Data must be 2D array, got shape {data.shape}")
+        if data.ndim != 2:
+            raise ValueError(f"Data must be 2D array, got shape {data.shape}")
 
-            if data.shape[1] != self.channels:
-                raise ValueError(
-                    f"Data has {data.shape[1]} channels, but output configured for {self.channels} channels"
-                )
+        if data.shape[1] != self.channels:
+            raise ValueError(
+                f"Data has {data.shape[1]} channels, but output configured for {self.channels} channels"
+            )
 
-            # Play the data
-            self._stream.play(data)
-        except Exception as e:
-            self.logger.error(f"Error writing audio frames: {e}")
-            raise RuntimeError(f"Failed to write audio frames: {e}") from e
+        # Play the data
+        self._stream.play(data)
 
     def __del__(self) -> None:
         """Cleanup method to properly close the audio stream when the object is
         destroyed."""
         if hasattr(self, "_stream"):
-            try:
-                self._stream.__exit__(None, None, None)
-                self.logger.debug("Audio stream closed")
-            except Exception:
-                self.logger.exception("Error closing audio stream.")
-                raise
+            self._stream.__exit__(None, None, None)
+            self.logger.debug("Audio stream closed")

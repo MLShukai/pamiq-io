@@ -66,18 +66,12 @@ class SoundcardAudioInput(AudioInput):
                 or None for default device.
             block_size: Size of each audio block for the recorder.
             channels: Number of audio channels to input (1 for mono, 2 for stereo).
-
-        Raises:
-            RuntimeError: If the specified device is not found or cannot be accessed.
         """
         # Get the microphone device
-        try:
-            if device_id is None:
-                self._mic = sc.default_microphone()
-            else:
-                self._mic = sc.get_microphone(device_id, include_loopback=True)
-        except Exception as e:
-            raise RuntimeError(f"Failed to initialize audio device: {e}") from e
+        if device_id is None:
+            self._mic = sc.default_microphone()
+        else:
+            self._mic = sc.get_microphone(device_id, include_loopback=True)
 
         self._sample_rate = sample_rate
         self._channels = channels
@@ -129,20 +123,12 @@ class SoundcardAudioInput(AudioInput):
         Raises:
             RuntimeError: If the audio frames cannot be read.
         """
-        try:
-            frames = self._stream.record(numframes=frame_size)
-            return np.asarray(frames, dtype=np.float32)
-        except Exception as e:
-            self.logger.error(f"Error reading audio frames: {e}")
-            raise RuntimeError(f"Failed to read audio frames: {e}") from e
+        frames = self._stream.record(numframes=frame_size)
+        return np.asarray(frames, dtype=np.float32)
 
     def __del__(self) -> None:
         """Cleanup method to properly close the audio stream when the object is
         destroyed."""
         if hasattr(self, "_stream"):
-            try:
-                self._stream.__exit__(None, None, None)
-                self.logger.debug("Audio stream closed")
-            except Exception:
-                self.logger.exception("Error closing audio stream.")
-                raise
+            self._stream.__exit__(None, None, None)
+            self.logger.debug("Audio stream closed")

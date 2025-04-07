@@ -146,26 +146,6 @@ class TestSoundcardAudioOutput:
         ):
             output.write(test_audio)
 
-    def test_write_error(self, mock_sc, mock_speaker, caplog):
-        """Tests handling of errors during write operation."""
-
-        # Configure the player mock to raise an exception
-        player = mock_speaker.player.return_value
-        error_message = "Simulated audio write error"
-        player.play.side_effect = Exception(error_message)
-
-        output = SoundcardAudioOutput(sample_rate=44100)
-        test_audio = np.zeros((1024, 2), dtype=np.float32)
-
-        # Attempt to write should raise RuntimeError
-        with pytest.raises(
-            RuntimeError, match=f"Failed to write audio frames:.*{error_message}"
-        ):
-            output.write(test_audio)
-
-        # Check that error was logged
-        assert "Error writing audio frames:" in caplog.text
-
     def test_cleanup_on_deletion(self, mock_sc, mock_speaker, mocker: MockerFixture):
         """Tests that stream is properly closed on object deletion."""
         player = mock_speaker.player.return_value
@@ -179,25 +159,3 @@ class TestSoundcardAudioOutput:
 
         # Verify that the stream was closed properly
         exit_spy.assert_called_once_with(None, None, None)
-
-    def test_cleanup_handles_errors(
-        self, mock_sc, mock_speaker, caplog, mocker: MockerFixture
-    ):
-        """Tests that errors during cleanup are handled properly."""
-        player = mock_speaker.player.return_value
-
-        # Configure exit to raise an exception
-        exit_mock = mocker.patch.object(
-            player, "__exit__", side_effect=Exception("Stream close error")
-        )
-
-        # Create output object
-        output = SoundcardAudioOutput()
-
-        # Deletion should raise the exception
-        with pytest.raises(Exception, match="Stream close error"):
-            output.__del__()
-
-        # Check that error was logged
-        assert "Error closing audio stream" in caplog.text
-        exit_mock.assert_called_once()

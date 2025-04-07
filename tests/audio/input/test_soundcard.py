@@ -112,25 +112,6 @@ class TestSoundcardAudioInput:
         assert result.dtype == np.float32
         assert result.shape == (test_frames, test_channels)
 
-    def test_read_error(self, mock_sc, mock_mic, caplog):
-        """Tests handling of errors during read operation."""
-
-        # Configure the recorder mock to raise an exception
-        recorder = mock_mic.recorder.return_value
-        error_message = "Simulated audio read error"
-        recorder.record.side_effect = Exception(error_message)
-
-        capture = SoundcardAudioInput(sample_rate=44100)
-
-        # Attempt to read should raise RuntimeError
-        with pytest.raises(
-            RuntimeError, match=f"Failed to read audio frames:.*{error_message}"
-        ):
-            capture.read(frame_size=1024)
-
-        # Check that error was logged
-        assert "Error reading audio frames:" in caplog.text
-
     def test_cleanup_on_deletion(self, mock_sc, mock_mic, mocker: MockerFixture):
         """Tests that stream is properly closed on object deletion."""
         recorder = mock_mic.recorder.return_value
@@ -144,25 +125,3 @@ class TestSoundcardAudioInput:
 
         # Verify that the stream was closed properly
         exit_spy.assert_called_once_with(None, None, None)
-
-    def test_cleanup_handles_errors(
-        self, mock_sc, mock_mic, caplog, mocker: MockerFixture
-    ):
-        """Tests that errors during cleanup are handled properly."""
-        recorder = mock_mic.recorder.return_value
-
-        # Configure exit to raise an exception
-        exit_mock = mocker.patch.object(
-            recorder, "__exit__", side_effect=Exception("Stream close error")
-        )
-
-        # Create capture object
-        capture = SoundcardAudioInput()
-
-        # Deletion should raise the exception
-        with pytest.raises(Exception, match="Stream close error"):
-            capture.__del__()
-
-        # Check that error was logged
-        assert "Error closing audio stream" in caplog.text
-        exit_mock.assert_called_once()
