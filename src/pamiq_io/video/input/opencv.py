@@ -1,7 +1,7 @@
 """This module provides OpenCV-based video input implementation."""
 
 import logging
-from typing import override
+from typing import override, TypedDict
 
 import cv2
 import numpy as np
@@ -9,6 +9,92 @@ from numpy.typing import NDArray
 
 from .base import VideoInput
 
+
+class DeviceInfo(TypedDict):
+    index: int
+    name: str
+    resolution: tuple[int, int]
+
+def list_video_devices(max_devices: int = 10) -> list[DeviceInfo]:
+    """List all available video capture devices.
+
+    Scans for video capture devices by attempting to open each index from 0 to max_devices-1.
+    For each successfully opened device, retrieves basic information such as resolution and name.
+
+    Args:
+        max_devices: Maximum number of device indices to check.
+
+    Returns:
+        A list of dictionaries, each containing device information:
+            - 'index': The device index
+            - 'name': The device name (if available, otherwise empty string)
+            - 'resolution': Tuple of (width, height)
+
+    Examples:
+        >>> devices = list_video_devices()
+        >>> for device in devices:
+        ...     print(f"Index: {device['index']}, Resolution: {device['resolution']}")
+    """
+    available_devices: list[DeviceInfo] = []
+    logger = logging.getLogger(__name__)
+    
+    for i in range(max_devices):
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened():
+            # Get device information
+            width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            
+            # Attempt to get device name 
+            # Note: OpenCV may not provide device names on all platforms
+            device_name = ""
+            try:
+                # This property might not be available on all platforms/OpenCV builds
+                device_name = cap.getBackendName()
+            except:
+                pass
+
+            device_info = DeviceInfo(
+                index=i,
+                name=device_name,
+                resolution=(width,height)
+            )
+            available_devices.append(device_info)
+            logger.debug(f"Found video device at index {i}: {width}x{height}")
+            
+        # Always release the capture object
+        cap.release()
+            
+    return available_devices
+
+
+def show_video_devices(max_devices: int = 10) -> None:
+    """Display all available video capture devices.
+
+    Lists all available video devices with their index, name (if available), and resolution.
+
+    Args:
+        max_devices: Maximum number of device indices to check.
+
+    Examples:
+        >>> show_video_devices()
+        Available Video Capture Devices:
+        [0] Resolution: 1280x720
+        [1] Resolution: 640x480
+    """
+    devices = list_video_devices(max_devices)
+    
+    print("Available Video Capture Devices:")
+    print("-------------------------------")
+    
+    if not devices:
+        print("No video capture devices found.")
+        return
+        
+    for device in devices:
+        width, height = device["resolution"]
+        device_name = f" - {device['name']}" if device["name"] else ""
+        print(f"[{device['index']}]{device_name}, Resolution: {width}x{height}")
 
 class OpenCVVideoInput(VideoInput):
     """Video input implementation using OpenCV.
