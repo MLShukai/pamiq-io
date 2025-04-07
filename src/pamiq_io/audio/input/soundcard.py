@@ -10,6 +10,31 @@ from numpy.typing import NDArray
 from .base import AudioInput
 
 
+def show_all_input_devices() -> None:
+    """Display all available audio input devices.
+
+    Lists all available audio input devices with their index, ID, and name.
+    Includes loopback devices (virtual microphones that record speaker output).
+
+    Examples:
+        >>> show_all_input_devices()
+        Available Audio Input Devices:
+        [0] ID: "device1" - Built-in Microphone
+        [1] ID: "device2" - External USB Microphone
+        [2] ID: "device3" - System Audio (Loopback)
+    """
+    print("Default Microhpone Device:")
+    print("------------------------------")
+    mic = sc.default_microphone()
+    print(f'[*] ID: "{mic.id}" - {mic.name}')
+    print()
+    print("Available Audio Input Devices:")
+    print("------------------------------")
+
+    for i, mic in enumerate(sc.all_microphones(include_loopback=True)):
+        print(f'[{i}] ID: "{mic.id}" - {mic.name}')
+
+
 class SoundcardAudioInput(AudioInput):
     """Audio input implementation using the Soundcard library.
 

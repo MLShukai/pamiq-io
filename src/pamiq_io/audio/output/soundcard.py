@@ -11,6 +11,30 @@ from numpy.typing import NDArray
 from .base import AudioOutput
 
 
+def show_all_output_devices() -> None:
+    """Display all available audio output devices.
+
+    Lists all available audio output devices with their index, ID, and name.
+
+    Examples:
+        >>> show_all_output_devices()
+        Available Audio Output Devices:
+        [0] ID: "device1" - Built-in Speakers
+        [1] ID: "device2" - HDMI Audio Output
+        [2] ID: "device3" - External USB Headphones
+    """
+    print("Default Speaker Device:")
+    print("-------------------------------")
+    speaker = sc.default_speaker()
+    print(f'[*] ID: "{speaker.id}" - {speaker.name}')
+
+    print("Available Audio Output Devices:")
+    print("-------------------------------")
+
+    for i, speaker in enumerate(sc.all_speakers()):
+        print(f'[{i}] ID: "{speaker.id}" - {speaker.name}')
+
+
 class SoundcardAudioOutput(AudioOutput):
     """Audio output implementation using the Soundcard library.
 
