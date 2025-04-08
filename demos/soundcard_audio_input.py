@@ -8,7 +8,6 @@ SoundcardAudioInput and saving it as a WAV file using soundfile.
 import argparse
 import logging
 from pathlib import Path
-from time import sleep
 
 import soundfile as sf
 
