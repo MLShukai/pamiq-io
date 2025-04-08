@@ -11,7 +11,7 @@ from pythonosc.osc_server import ThreadingOSCUDPServer
 class MessageHandler(Protocol):
     """Protocol defining the handler function signature for OSC messages."""
 
-    def __call__(self, *args: Any) -> None: ...
+    def __call__(self, *args: Any, **kwds: Any) -> None: ...
 
 
 class OscInput:
