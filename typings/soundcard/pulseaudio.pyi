@@ -2,7 +2,7 @@
 Type stubs for the soundcard module.
 """
 
-from typing import Any, override
+from typing import Any, Self, override
 
 import numpy as np
 from numpy.typing import NDArray
@@ -406,7 +406,7 @@ class _Stream:
         blocksize: int = ...,
         name: str = ...,
     ) -> None: ...
-    def __enter__(self) -> "_Stream": ...
+    def __enter__(self) -> Self: ...
     def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None: ...
     @property
     def latency(self) -> float:
