@@ -15,6 +15,43 @@ dependencies = [
     "soundcard>=0.4.4",
 ]
 
+keywords = [
+  "AI",
+  "ML",
+  "Machine Learning",
+  "OBS",
+  "obs-studio",
+  "inputtino",
+  "automation",
+  "video",
+  "audio",
+  "mouse",
+  "keyboard",
+  "osc",
+  "Agent",
+  "IO"
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Natural Language :: English",
+  "Natural Language :: Japanese",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+
+[project.urls]
+Repository = "https://github.com/MLShukai/pamiq-io"
+Issues = "https://github.com/MLShukai/pamiq-io/issues"
+
+
 [tool.uv.sources]
 inputtino-python = { git = "https://github.com/games-on-whales/inputtino.git", subdirectory = "bindings/python" }
 
