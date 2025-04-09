@@ -4,13 +4,13 @@ from typing import Literal
 
 from inputtino import Mouse, MouseButton
 
-__all__ = ["MouseOutput", "MouseButton", "Button"]
+__all__ = ["InputtinoMouseOutput", "MouseButton", "Button"]
 
 type ButtonLiteral = Literal["left", "right", "middle", "side", "extra"]
 type Button = ButtonLiteral | MouseButton
 
 
-class MouseOutput:
+class InputtinoMouseOutput:
     """Mouse output implementation for simulating mouse inputs.
 
     This class provides a high-level interface for simulating mouse movements

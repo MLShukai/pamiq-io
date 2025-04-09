@@ -2,11 +2,11 @@
 
 import pytest
 
-from pamiq_io.mouse import MouseButton, MouseOutput
+from pamiq_io.mouse import InputtinoMouseOutput, MouseButton
 
 
-class TestMouseOutput:
-    """Tests for the MouseOutput class."""
+class TestInputtinoMouseOutput:
+    """Tests for the InputtinoMouseOutput class."""
 
     @pytest.fixture
     def mock_mouse(self, mocker):
@@ -17,7 +17,7 @@ class TestMouseOutput:
 
     def test_move(self, mock_mouse):
         """Test moving the mouse cursor."""
-        mouse_output = MouseOutput()
+        mouse_output = InputtinoMouseOutput()
         mouse_output.move(100, -50)
 
         # Verify that move was called with the correct parameters
@@ -26,23 +26,33 @@ class TestMouseOutput:
     def test_convert_to_mouse_button_with_string(self):
         """Test converting string literals to MouseButton enum values."""
         # Test all valid string literals
-        assert MouseOutput.convert_to_mouse_button("left") == MouseButton.LEFT
-        assert MouseOutput.convert_to_mouse_button("right") == MouseButton.RIGHT
-        assert MouseOutput.convert_to_mouse_button("middle") == MouseButton.MIDDLE
-        assert MouseOutput.convert_to_mouse_button("side") == MouseButton.SIDE
-        assert MouseOutput.convert_to_mouse_button("extra") == MouseButton.EXTRA
+        assert InputtinoMouseOutput.convert_to_mouse_button("left") == MouseButton.LEFT
+        assert (
+            InputtinoMouseOutput.convert_to_mouse_button("right") == MouseButton.RIGHT
+        )
+        assert (
+            InputtinoMouseOutput.convert_to_mouse_button("middle") == MouseButton.MIDDLE
+        )
+        assert InputtinoMouseOutput.convert_to_mouse_button("side") == MouseButton.SIDE
+        assert (
+            InputtinoMouseOutput.convert_to_mouse_button("extra") == MouseButton.EXTRA
+        )
 
     def test_convert_to_mouse_button_with_enum(self):
         """Test that enum values pass through the converter unchanged."""
         # Test with direct enum values
-        assert MouseOutput.convert_to_mouse_button(MouseButton.LEFT) == MouseButton.LEFT
         assert (
-            MouseOutput.convert_to_mouse_button(MouseButton.RIGHT) == MouseButton.RIGHT
+            InputtinoMouseOutput.convert_to_mouse_button(MouseButton.LEFT)
+            == MouseButton.LEFT
+        )
+        assert (
+            InputtinoMouseOutput.convert_to_mouse_button(MouseButton.RIGHT)
+            == MouseButton.RIGHT
         )
 
     def test_press_with_string(self, mock_mouse):
         """Test pressing a mouse button using a string literal."""
-        mouse_output = MouseOutput()
+        mouse_output = InputtinoMouseOutput()
 
         # Test with string literal
         mouse_output.press("left")
@@ -50,7 +60,7 @@ class TestMouseOutput:
 
     def test_press_with_enum(self, mock_mouse):
         """Test pressing a mouse button using MouseButton enum."""
-        mouse_output = MouseOutput()
+        mouse_output = InputtinoMouseOutput()
 
         # Test with enum value
         mouse_output.press(MouseButton.RIGHT)
@@ -58,7 +68,7 @@ class TestMouseOutput:
 
     def test_release_with_string(self, mock_mouse):
         """Test releasing a mouse button using a string literal."""
-        mouse_output = MouseOutput()
+        mouse_output = InputtinoMouseOutput()
 
         # Test with string literal
         mouse_output.release("middle")
@@ -66,7 +76,7 @@ class TestMouseOutput:
 
     def test_release_with_enum(self, mock_mouse):
         """Test releasing a mouse button using MouseButton enum."""
-        mouse_output = MouseOutput()
+        mouse_output = InputtinoMouseOutput()
 
         # Test with enum value
         mouse_output.release(MouseButton.SIDE)
