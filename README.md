@@ -2,6 +2,8 @@
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Document Style](https://img.shields.io/badge/%20docstyle-google-3666d6.svg)](https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings)
+
 
 **pamiq-io** is a versatile I/O library for Python, providing easy access to audio, video, and input device capabilities for interactive applications, simulations, and AI projects, made for P-AMI\<Q>.
 
@@ -25,15 +27,41 @@
 ### Using pip
 
 ```bash
+# Install build dependencies first
+sudo apt install git cmake build-essential pkg-config libevdev-dev libsndfile1
+
+# Install the base package
 pip install pamiq-io
+
+# For demo scripts, include the demo extras
+pip install pamiq-io[demo]
 ```
 
 ### Development installation
 
 ```bash
+# Install build dependencies
+sudo apt install git cmake build-essential pkg-config libevdev-dev libsndfile1
+
+# Clone and setup
 git clone https://github.com/MLShukai/pamiq-io.git
 cd pamiq-io
 make venv     # Sets up virtual environment with all dependencies
+```
+
+## 🧰 Command-Line Tools
+
+pamiq-io includes several helpful command-line tools:
+
+```bash
+# List available video input devices
+pamiq-io-show-opencv-available-input-devices
+
+# List available audio input devices
+pamiq-io-show-soundcard-available-input-devices
+
+# List available audio output devices
+pamiq-io-show-soundcard-available-output-devices
 ```
 
 ## 🛠️ Setup
@@ -47,19 +75,19 @@ make venv     # Sets up virtual environment with all dependencies
 
 2. If the virtual camera functionality is not available after installing OBS, you may need to install v4l2loopback:
 
-    ```bash
-    sudo apt install v4l2loopback-dkms
-    sudo modprobe v4l2loopback
-    ```
+   ```bash
+   sudo apt install v4l2loopback-dkms
+   sudo modprobe v4l2loopback
+   ```
 
 3. In OBS, start the virtual camera (Tools → Start Virtual Camera)
 
 4. (Optional) To find the virtual camera device, you can install v4l-utils:
 
-    ```bash
-    sudo apt install v4l-utils
-    v4l2-ctl --list-devices | grep -A 1 'OBS Virtual Camera' | grep -oP '\t\K/dev.*'
-    ```
+   ```bash
+   sudo apt install v4l-utils
+   v4l2-ctl --list-devices | grep -A 1 'OBS Virtual Camera' | grep -oP '\t\K/dev.*'
+   ```
 
 ## 🐳 Docker
 
@@ -68,8 +96,30 @@ A Docker configuration is provided for easy development and deployment.
 ### Basic usage:
 
 ```bash
-docker build -t pamiq-io -f .devcontainer/Dockerfile .
-docker run --privileged -it pamiq-io
+# Build a basic image with required dependencies
+FROM ubuntu:24.04
+
+# Install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-pip \
+    git cmake build-essential pkg-config libevdev-dev \
+    libopencv-dev \
+    libsndfile1 \
+    pulseaudio \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pamiq-io
+RUN pip install pamiq-io[demo]
+
+# For development, you may want to check our devcontainer configuration:
+# https://github.com/MLShukai/pamiq-io/blob/main/.devcontainer/Dockerfile
+```
+
+When running the container, you need privileged access for hardware devices:
+
+```bash
+docker run --privileged -it your-pamiq-image
 ```
 
 > ⚠️ **Note**: The `--privileged` flag is required for hardware access to input devices.
@@ -78,22 +128,14 @@ docker run --privileged -it pamiq-io
 
 To use audio inside Docker, you need to set up PulseAudio properly:
 
-1. Install PulseAudio into your container:
-
-    ```bash
-    apt install pulseaudio
-    ```
-
-2. Run Docker with these volume mounts:
-
-    ```bash
-    docker run --privileged -it \
+```bash
+docker run --privileged -it \
     -v ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native \
     -v $HOME/.config/pulse/cookie:/root/.config/pulse/cookie \
     -e PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
     -e PULSE_COOKIE=/root/.config/pulse/cookie \
-    pamiq-io
-    ```
+    your-pamiq-image
+```
 
 ## 📚 Usage
 
