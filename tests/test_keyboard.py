@@ -2,11 +2,11 @@
 
 import pytest
 
-from pamiq_io.keyboard import KeyboardOutput, KeyCode
+from pamiq_io.keyboard import InputtinoKeyboardOutput, KeyCode
 
 
-class TestKeyboardOutput:
-    """Tests for the KeyboardOutput class."""
+class TestInputtinoKeyboardOutput:
+    """Tests for the InputtinoKeyboardOutput class."""
 
     @pytest.fixture
     def mock_keyboard(self, mocker):
@@ -17,26 +17,26 @@ class TestKeyboardOutput:
 
     def test_press_with_keycode(self, mock_keyboard):
         """Test pressing a key using KeyCode enum."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
         kb_output.press(KeyCode.A)
         mock_keyboard.press.assert_called_once_with(KeyCode.A)
 
     def test_press_with_string(self, mock_keyboard, mocker):
         """Test pressing a key using a string identifier."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
 
         kb_output.press("b")
         mock_keyboard.press.assert_called_once_with(KeyCode.B)
 
     def test_press_with_int(self, mock_keyboard):
         """Test pressing a key using an integer key code."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
         kb_output.press(65)  # ASCII code for 'A'
         mock_keyboard.press.assert_called_once_with(KeyCode(65))
 
     def test_press_multiple_keys(self, mock_keyboard):
         """Test pressing multiple keys at once."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
         kb_output.press(KeyCode.CTRL, KeyCode.C)
 
         assert mock_keyboard.press.call_count == 2
@@ -45,26 +45,26 @@ class TestKeyboardOutput:
 
     def test_release_with_keycode(self, mock_keyboard):
         """Test releasing a key using KeyCode enum."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
         kb_output.release(KeyCode.A)
         mock_keyboard.release.assert_called_once_with(KeyCode.A)
 
     def test_release_with_string(self, mock_keyboard, mocker):
         """Test releasing a key using a string identifier."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
 
         kb_output.release("b")
         mock_keyboard.release.assert_called_once_with(KeyCode.B)
 
     def test_release_with_int(self, mock_keyboard):
         """Test releasing a key using an integer key code."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
         kb_output.release(65)  # ASCII code for 'A'
         mock_keyboard.release.assert_called_once_with(KeyCode(65))
 
     def test_release_multiple_keys(self, mock_keyboard):
         """Test releasing multiple keys at once."""
-        kb_output = KeyboardOutput()
+        kb_output = InputtinoKeyboardOutput()
         kb_output.release(KeyCode.CTRL, KeyCode.C)
 
         assert mock_keyboard.release.call_count == 2

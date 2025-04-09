@@ -2,12 +2,12 @@
 
 from inputtino import Keyboard, KeyCode
 
-__all__ = ["KeyboardOutput", "KeyCode"]
+__all__ = ["InputtinoKeyboardOutput", "KeyCode"]
 
 type Key = int | str | KeyCode
 
 
-class KeyboardOutput:
+class InputtinoKeyboardOutput:
     """A high-level interface for simulating keyboard inputs.
 
     This class wraps the inputtino Keyboard class to provide a more
