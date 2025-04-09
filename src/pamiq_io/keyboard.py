@@ -1,10 +1,4 @@
-"""Keyboard output module for simulating keyboard inputs.
-
-This module provides a high-level interface for simulating keyboard
-inputs using the inputtino library. It allows for easier handling of key
-presses and releases with support for multiple keys and different input
-formats.
-"""
+"""Keyboard output module for simulating keyboard inputs."""
 
 from inputtino import Keyboard, KeyCode
 
