@@ -3,7 +3,7 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**pamiq-io** is a versatile I/O library for Python, providing easy access to audio, video, and input device capabilities for interactive applications, simulations, and AI projects.
+**pamiq-io** is a versatile I/O library for Python, providing easy access to audio, video, and input device capabilities for interactive applications, simulations, and AI projects, made for P-AMI\<Q>.
 
 ## ✨ Features
 
@@ -47,19 +47,19 @@ make venv     # Sets up virtual environment with all dependencies
 
 2. If the virtual camera functionality is not available after installing OBS, you may need to install v4l2loopback:
 
-```bash
-sudo apt install v4l2loopback-dkms
-sudo modprobe v4l2loopback
-```
+    ```bash
+    sudo apt install v4l2loopback-dkms
+    sudo modprobe v4l2loopback
+    ```
 
 3. In OBS, start the virtual camera (Tools → Start Virtual Camera)
 
 4. (Optional) To find the virtual camera device, you can install v4l-utils:
 
-```bash
-sudo apt install v4l-utils
-v4l2-ctl --list-devices | grep -A 1 'OBS Virtual Camera' | grep -oP '\t\K/dev.*'
-```
+    ```bash
+    sudo apt install v4l-utils
+    v4l2-ctl --list-devices | grep -A 1 'OBS Virtual Camera' | grep -oP '\t\K/dev.*'
+    ```
 
 ## 🐳 Docker
 
@@ -80,20 +80,20 @@ To use audio inside Docker, you need to set up PulseAudio properly:
 
 1. Install PulseAudio into your container:
 
-```bash
-apt install pulseaudio
-```
+    ```bash
+    apt install pulseaudio
+    ```
 
 2. Run Docker with these volume mounts:
 
-```bash
-docker run --privileged -it \
-  -v ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native \
-  -v $HOME/.config/pulse/cookie:/root/.config/pulse/cookie \
-  -e PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
-  -e PULSE_COOKIE=/root/.config/pulse/cookie \
-  pamiq-io
-```
+    ```bash
+    docker run --privileged -it \
+    -v ${XDG_RUNTIME_DIR}/pulse/native:${XDG_RUNTIME_DIR}/pulse/native \
+    -v $HOME/.config/pulse/cookie:/root/.config/pulse/cookie \
+    -e PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
+    -e PULSE_COOKIE=/root/.config/pulse/cookie \
+    pamiq-io
+    ```
 
 ## 📚 Usage
 
