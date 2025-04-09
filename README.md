@@ -4,7 +4,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Document Style](https://img.shields.io/badge/%20docstyle-google-3666d6.svg)](https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings)
 
-
 **pamiq-io** is a versatile I/O library for Python, providing easy access to audio, video, and input device capabilities for interactive applications, simulations, and AI projects, made for P-AMI\<Q>.
 
 ## ✨ Features
