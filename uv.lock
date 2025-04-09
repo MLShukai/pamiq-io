@@ -134,6 +134,14 @@ wheels = [
 ]
 
 [[package]]
+name = "inputtino-python"
+version = "0.1.0"
+source = { git = "https://github.com/games-on-whales/inputtino.git?subdirectory=bindings%2Fpython#fd136cfe492b4375b4507718bcca1f044588fc6f" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+
+[[package]]
 name = "nodeenv"
 version = "1.9.1"
 source = { registry = "https://pypi.org/simple" }
@@ -211,6 +219,7 @@ name = "pamiq-io"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "inputtino-python" },
     { name = "numpy" },
     { name = "opencv-python" },
     { name = "python-osc" },
@@ -234,6 +243,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "inputtino-python", git = "https://github.com/games-on-whales/inputtino.git?subdirectory=bindings%2Fpython" },
     { name = "numpy", specifier = ">=2.2.4" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },
     { name = "pillow", marker = "extra == 'demo'", specifier = ">=11.1.0" },

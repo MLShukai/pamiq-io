@@ -8,11 +8,15 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "inputtino-python",
     "numpy>=2.2.4",
     "opencv-python>=4.11.0.86",
     "python-osc>=1.9.3",
     "soundcard>=0.4.4",
 ]
+
+[tool.uv.sources]
+inputtino-python = { git = "https://github.com/games-on-whales/inputtino.git", subdirectory = "bindings/python" }
 
 [project.scripts]
 pamiq-io-show-opencv-available-input-devices = "pamiq_io.video.input.opencv:show_video_devices"

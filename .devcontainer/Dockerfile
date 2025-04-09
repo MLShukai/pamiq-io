@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libopencv-dev \
     libsndfile1 \
     pulseaudio \
+    cmake \
+    build-essential \
+    pkg-config \
+    libevdev-dev \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
