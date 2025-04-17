@@ -27,12 +27,19 @@
 
 ```bash
 # Install build dependencies first
-sudo apt install git cmake build-essential pkg-config libevdev-dev libsndfile1
+sudo apt install git cmake build-essential pkg-config libevdev-dev
+
+# Inputtino is not published to pypi, so install manually.
+pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
+
+# You may need ninja
+pip install ninja
 
 # Install the base package
 pip install pamiq-io
 
 # For demo scripts, include the demo extras
+sudo apt install libsndfile1
 pip install pamiq-io[demo]
 ```
 
