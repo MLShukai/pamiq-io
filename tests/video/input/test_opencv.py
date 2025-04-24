@@ -28,6 +28,15 @@ class TestOpenCVVideoInput:
         assert capture.fps == 30
         assert capture.channels == 3  # Default value
 
+    def test_cannot_open_camera(self, mocker):
+        mock_camera = mocker.patch("cv2.VideoCapture")()
+        mock_camera.isOpened.return_value = False
+        with pytest.raises(RuntimeError, match="Can not open camera."):
+            OpenCVVideoInput(0)
+
+        with pytest.raises(RuntimeError, match="Can not open camera."):
+            OpenCVVideoInput(mock_camera)
+
     def test_init_with_camera_object(self, mocker):
         """Test initialization with camera object."""
         mock_camera = mocker.MagicMock()

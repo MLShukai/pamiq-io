@@ -137,6 +137,9 @@ class OpenCVVideoInput(VideoInput):
         if isinstance(camera, int):
             camera = cv2.VideoCapture(index=camera)
 
+        if not camera.isOpened():
+            raise RuntimeError("Can not open camera.")
+
         self.camera = camera
         self.num_trials_on_read_failure = num_trials_on_read_failure
 
