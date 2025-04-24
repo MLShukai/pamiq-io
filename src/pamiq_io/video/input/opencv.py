@@ -118,9 +118,9 @@ class OpenCVVideoInput(VideoInput):
     def __init__(
         self,
         camera: cv2.VideoCapture | int,
-        width: int = 640,
-        height: int = 480,
-        fps: float = 30,
+        width: int | None = None,
+        height: int | None = None,
+        fps: float | None = None,
         channels: int = 3,
         num_trials_on_read_failure: int = 10,
     ) -> None:
@@ -128,14 +128,17 @@ class OpenCVVideoInput(VideoInput):
 
         Args:
             camera: The OpenCV VideoCapture object or camera index to use.
-            width: The desired width of the video frames.
-            height: The desired height of the video frames.
-            fps: The desired frames per second (fps) of the video.
+            width: The desired width of the video frames. If None, use the camera's default width.
+            height: The desired height of the video frames. If None, use the camera's default height.
+            fps: The desired frames per second (fps) of the video. If None, use the camera's default fps.
             channels: The desired number of color channels (default is 3 for RGB/BGR).
             num_trials_on_read_failure: Number of trials on read failure.
         """
         if isinstance(camera, int):
             camera = cv2.VideoCapture(index=camera)
+
+        if not camera.isOpened():
+            raise RuntimeError("Can not open camera.")
 
         self.camera = camera
         self.num_trials_on_read_failure = num_trials_on_read_failure
@@ -150,21 +153,26 @@ class OpenCVVideoInput(VideoInput):
 
     def configure_camera(self) -> None:
         """Configures the camera settings with the desired properties."""
-        if (
-            not self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.expected_width)
-            or self.width != self.expected_width
-        ):
-            self.logger.warning(f"Failed to set width to {self.expected_width}.")
-        if (
-            not self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.expected_height)
-            or self.height != self.expected_height
-        ):
-            self.logger.warning(f"Failed to set height to {self.expected_height}.")
-        if (
-            not self.camera.set(cv2.CAP_PROP_FPS, self.expected_fps)
-            or self.fps != self.expected_fps
-        ):
-            self.logger.warning(f"Failed to set fps to {self.expected_fps}.")
+        if self.expected_width is not None:
+            if (
+                not self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, self.expected_width)
+                or self.width != self.expected_width
+            ):
+                self.logger.warning(f"Failed to set width to {self.expected_width}.")
+
+        if self.expected_height is not None:
+            if (
+                not self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, self.expected_height)
+                or self.height != self.expected_height
+            ):
+                self.logger.warning(f"Failed to set height to {self.expected_height}.")
+
+        if self.expected_fps is not None:
+            if (
+                not self.camera.set(cv2.CAP_PROP_FPS, self.expected_fps)
+                or self.fps != self.expected_fps
+            ):
+                self.logger.warning(f"Failed to set fps to {self.expected_fps}.")
 
     @property
     @override
