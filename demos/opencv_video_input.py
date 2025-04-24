@@ -38,17 +38,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--width",
         type=int,
-        default=1280,
-        help="Width of captured frame (default: 1280)",
+        default=None,
+        help="Width of captured frame (default: use camera's default)",
     )
     parser.add_argument(
         "--height",
         type=int,
-        default=720,
-        help="Height of captured frame (default: 720)",
+        default=None,
+        help="Height of captured frame (default: use camera's default)",
     )
     parser.add_argument(
-        "--fps", type=float, default=30.0, help="FPS of capture (default: 30.0)"
+        "--fps",
+        type=float,
+        default=None,
+        help="FPS of capture (default: use camera's default)",
     )
     parser.add_argument(
         "--output",
@@ -75,7 +78,17 @@ def main() -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info(f"Initializing camera (index: {args.camera})")
-    logger.info(f"Requested resolution: {args.width}x{args.height}, FPS: {args.fps}")
+    if args.width is not None or args.height is not None or args.fps is not None:
+        resolution_info = []
+        if args.width is not None:
+            resolution_info.append(f"width: {args.width}")
+        if args.height is not None:
+            resolution_info.append(f"height: {args.height}")
+        if args.fps is not None:
+            resolution_info.append(f"FPS: {args.fps}")
+        logger.info(f"Requested camera parameters: {', '.join(resolution_info)}")
+    else:
+        logger.info("Using camera's default parameters")
 
     # Initialize the video input
     input_device = OpenCVVideoInput(

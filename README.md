@@ -154,8 +154,16 @@ from pamiq_io.video import OpenCVVideoInput
 from pamiq_io.video.input.opencv import show_video_devices
 show_video_devices()
 
-# Capture from camera
-video_input = OpenCVVideoInput(camera=0, width=640, height=480)
+# Capture from camera using default parameters
+video_input = OpenCVVideoInput(camera=0)
+frame = video_input.read()
+
+# Capture with specific resolution
+video_input = OpenCVVideoInput(camera=0, width=640, height=480, fps=30.0)
+frame = video_input.read()
+
+# Capture with mixed parameters (use default width, but specify height)
+video_input = OpenCVVideoInput(camera=0, width=None, height=720, fps=None)
 frame = video_input.read()
 ```
 

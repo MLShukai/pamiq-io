@@ -59,7 +59,7 @@ class TestOpenCVVideoInput:
             cv2.CAP_PROP_FPS: 15,  # Different from expected 30
         }[prop]
 
-        OpenCVVideoInput(camera=mock_camera)
+        OpenCVVideoInput(camera=mock_camera, width=1, height=1, fps=1)
 
         # Check if warnings were logged
         assert "Failed to set width" in caplog.text
@@ -188,3 +188,100 @@ class TestOpenCVVideoInput:
         assert "Failed to read input frame, retrying (1/3)" in caplog.text
         assert "Failed to read input frame, retrying (2/3)" in caplog.text
         assert "Failed to read input frame, retrying (3/3)" in caplog.text
+
+    def test_init_with_none_parameters(self, mocker):
+        """Test initialization with None parameters."""
+        mock_camera = mocker.patch("cv2.VideoCapture")
+        mock_camera.return_value.set.return_value = True
+        mock_camera.return_value.get.side_effect = lambda prop: {
+            cv2.CAP_PROP_FRAME_WIDTH: 1280,
+            cv2.CAP_PROP_FRAME_HEIGHT: 720,
+            cv2.CAP_PROP_FPS: 30,
+        }[prop]
+
+        # Initialize with None parameters
+        capture = OpenCVVideoInput(camera=0, width=None, height=None, fps=None)
+
+        # Verify camera is created
+        mock_camera.assert_called_once_with(index=0)
+
+        # Verify that set() was not called for the None parameters
+        for call in mock_camera.return_value.set.call_args_list:
+            args = call[0]
+            assert args[0] not in [
+                cv2.CAP_PROP_FRAME_WIDTH,
+                cv2.CAP_PROP_FRAME_HEIGHT,
+                cv2.CAP_PROP_FPS,
+            ]
+
+        # Verify default values are obtained from the camera
+        assert capture.width == 1280
+        assert capture.height == 720
+        assert capture.fps == 30
+        assert capture.channels == 3  # Default value
+
+    def test_configure_camera_with_none_parameters(self, mocker, caplog):
+        """Test configure_camera with None parameters."""
+        mock_camera = mocker.patch("cv2.VideoCapture")
+
+        # Return different values for get to simulate camera properties
+        mock_camera.get.side_effect = lambda prop: {
+            cv2.CAP_PROP_FRAME_WIDTH: 1280,
+            cv2.CAP_PROP_FRAME_HEIGHT: 720,
+            cv2.CAP_PROP_FPS: 30,
+        }[prop]
+
+        # Create capture with None parameters
+        capture = OpenCVVideoInput(
+            camera=mock_camera, width=None, height=None, fps=None
+        )
+
+        # Reset mock to clear any calls from initialization
+        mock_camera.set.reset_mock()
+        mock_camera.get.reset_mock()
+
+        # Configure camera
+        capture.configure_camera()
+
+        # Verify set() was not called for None parameters
+        mock_camera.set.assert_not_called()
+
+        # Verify no warnings were logged
+        for record in caplog.records:
+            assert "Failed to set width" not in record.message
+            assert "Failed to set height" not in record.message
+            assert "Failed to set fps" not in record.message
+
+    def test_configure_camera_with_mixed_parameters(self, mocker, caplog):
+        """Test configure_camera with a mix of None and specified
+        parameters."""
+        mock_camera = mocker.MagicMock()
+
+        # Return different values for get to simulate camera properties
+        mock_camera.get.side_effect = lambda prop: {
+            cv2.CAP_PROP_FRAME_WIDTH: 1280,
+            cv2.CAP_PROP_FRAME_HEIGHT: 720,
+            cv2.CAP_PROP_FPS: 30,
+        }[prop]
+
+        # Set() returns True for success
+        mock_camera.set.return_value = True
+
+        # Create capture with mixed parameters (width=None but height and fps specified)
+        capture = OpenCVVideoInput(camera=mock_camera, width=None, height=480, fps=60)
+
+        # Reset mock to clear any calls from initialization
+        mock_camera.set.reset_mock()
+
+        # Configure camera
+        capture.configure_camera()
+
+        # Verify set() was called only for non-None parameters
+        assert mock_camera.set.call_count == 2
+        mock_camera.set.assert_any_call(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        mock_camera.set.assert_any_call(cv2.CAP_PROP_FPS, 60)
+
+        # Verify that set() was NOT called for None parameters
+        for call in mock_camera.set.call_args_list:
+            args = call[0]
+            assert args[0] != cv2.CAP_PROP_FRAME_WIDTH
