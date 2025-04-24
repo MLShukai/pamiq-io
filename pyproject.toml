@@ -1,7 +1,7 @@
 [project]
 name = "pamiq-io"
-version = "0.1.2"
-description = "Add your description here"
+version = "0.2.0"
+description = "Versatile I/O library for Python, providing easy access to audio, video, and input device capabilities."
 readme = "README.md"
 authors = [
     { name = "Geson-anko", email = "59220704+Geson-anko@users.noreply.github.com" }
