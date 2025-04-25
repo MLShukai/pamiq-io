@@ -51,19 +51,9 @@ class InputtinoMouseOutput:
         Returns:
             The corresponding MouseButton enum value
         """
-        match button:
-            case "left":
-                return MouseButton.LEFT
-            case "right":
-                return MouseButton.RIGHT
-            case "middle":
-                return MouseButton.MIDDLE
-            case "side":
-                return MouseButton.SIDE
-            case "extra":
-                return MouseButton.EXTRA
-            case _:
-                return button
+        if isinstance(button, MouseButton):
+            return button
+        return getattr(MouseButton, button.upper())
 
     def press(self, button: Button) -> None:
         """Press a mouse button.
