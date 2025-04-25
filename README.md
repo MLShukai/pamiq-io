@@ -231,8 +231,8 @@ keyboard.press(KeyCode.CTRL, KeyCode.C)  # Press Ctrl+C
 keyboard.release(KeyCode.CTRL, KeyCode.C)  # Release Ctrl+C
 
 # Mouse simulation
-mouse = InputtinoMouseOutput()
-mouse.move(100, 50)  # Move 100 pixels right, 50 pixels down
+mouse = InputtinoMouseOutput(fps=100)
+mouse.move(100, 50)  # Move 100 pixels / sec right, 50 pixels / sec down
 mouse.press("left")
 mouse.release("left")
 ```

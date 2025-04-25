@@ -1,5 +1,7 @@
 """Tests for the mouse_output module."""
 
+import time
+
 import pytest
 
 from pamiq_io.mouse import InputtinoMouseOutput, MouseButton
@@ -14,14 +16,6 @@ class TestInputtinoMouseOutput:
         mock_instance = mocker.Mock()
         mocker.patch("pamiq_io.mouse.Mouse", return_value=mock_instance)
         return mock_instance
-
-    def test_move(self, mock_mouse):
-        """Test moving the mouse cursor."""
-        mouse_output = InputtinoMouseOutput()
-        mouse_output.move(100, -50)
-
-        # Verify that move was called with the correct parameters
-        mock_mouse.move.assert_called_once_with(100, -50)
 
     def test_convert_to_mouse_button_with_string(self):
         """Test converting string literals to MouseButton enum values."""
@@ -81,3 +75,24 @@ class TestInputtinoMouseOutput:
         # Test with enum value
         mouse_output.release(MouseButton.SIDE)
         mock_mouse.release.assert_called_once_with(MouseButton.SIDE)
+
+    def test_move(self, mock_mouse):
+        """Test that move sets velocity correctly and the update loop moves the
+        mouse."""
+        # Create mouse with very high FPS to reduce test time
+        mouse_output = InputtinoMouseOutput(fps=100.0)
+
+        # Set velocity to 1000 pixels/second in both directions
+        mouse_output.move(1000.0, 1000.0)
+
+        # Wait a short time to ensure the update loop has run at least once
+        time.sleep(0.05)
+
+        # Check that the mouse was moved at least once
+        mock_mouse.move.assert_called()
+
+    def test_cleanup(self, mock_mouse):
+        """Test that mouse is properly cleaned up on destruction."""
+        # Create and immediately destroy
+        mouse_output = InputtinoMouseOutput(fps=1000.0)
+        mouse_output.__del__()
