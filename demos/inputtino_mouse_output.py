@@ -42,10 +42,10 @@ def parse_args() -> argparse.Namespace:
         help="Duration to complete the circle in seconds (default: 5.0)",
     )
     parser.add_argument(
-        "--steps",
-        type=int,
-        default=60,
-        help="Number of steps to complete the circle (default: 60)",
+        "--fps",
+        type=float,
+        default=100.0,
+        help="Frames per second for velocity updates (default: 100.0)",
     )
     return parser.parse_args()
 
@@ -60,44 +60,57 @@ def main() -> None:
         f"Starting mouse circle demo (radius: {args.radius}px, duration: {args.duration}s)"
     )
 
-    # Initialize the mouse output
-    mouse = InputtinoMouseOutput()
+    # Initialize the mouse output with specified fps
+    mouse = InputtinoMouseOutput(fps=args.fps)
 
     # Parameters
     radius = args.radius
     duration = args.duration
-    steps = args.steps
 
-    # Time between steps
-    step_time = duration / steps
+    # Angular velocity (radians per second)
+    angular_velocity = 2 * math.pi / duration
 
     try:
-        # Draw the circle
-        for i in range(steps):
-            # Calculate current and next angles
-            current_angle = 2 * math.pi * i / steps
-            next_angle = 2 * math.pi * (i + 1) / steps
+        # Start time for the animation
+        start_time = time.perf_counter()
+        running = True
 
-            # Calculate coordinates on the circle
-            x1 = radius * math.cos(current_angle)
-            y1 = radius * math.sin(current_angle)
-            x2 = radius * math.cos(next_angle)
-            y2 = radius * math.sin(next_angle)
+        while running:
+            # Calculate elapsed time
+            current_time = time.perf_counter()
+            elapsed = current_time - start_time
 
-            # Calculate movement needed
-            dx = int(x2 - x1)
-            dy = int(y2 - y1)
+            # Check if we've completed the circle
+            if elapsed >= duration:
+                running = False
+                break
 
-            # Move the mouse
-            logger.debug(f"Step {i+1}/{steps}: Moving by dx={dx}, dy={dy}")
-            mouse.move(dx, dy)
+            # Calculate current angle
+            angle = angular_velocity * elapsed
 
-            # Wait before next step
-            time.sleep(step_time)
+            # Calculate velocity vector that is tangent to the circle
+            # For a circle, the tangent at angle θ is (-sin θ, cos θ)
+            vx = -math.sin(angle) * (radius * angular_velocity)
+            vy = math.cos(angle) * (radius * angular_velocity)
 
+            # Update mouse velocity
+            mouse.move(vx, vy)
+
+            # Log progress (at 10% intervals)
+            progress = int(elapsed / duration * 100)
+            if progress % 10 == 0:
+                logger.info(f"Progress: {progress}%")
+
+            # Small sleep to avoid CPU usage
+            time.sleep(0.01)
+
+        # Stop the mouse movement
+        mouse.move(0, 0)
         logger.info("Circle drawing completed")
 
     except KeyboardInterrupt:
+        # Stop the mouse movement
+        mouse.move(0, 0)
         logger.info("Demo interrupted by user")
 
 
