@@ -11,7 +11,7 @@ from pythonosc.osc_server import ThreadingOSCUDPServer
 class MessageHandler(Protocol):
     """Protocol defining the handler function signature for OSC messages."""
 
-    def __call__(self, *args: Any, **kwds: Any) -> None: ...
+    def __call__(self, address: str, /, *args: Any, **kwds: Any) -> None: ...
 
 
 class OscInput:
@@ -58,15 +58,12 @@ class OscInput:
                      extracted from the OSC message.
 
         Examples:
-            >>> def my_handler(*args):
-            ...     print(f"Received message: {args}")
+            >>> def my_handler(address: str, *args):
+            ...     print(f"Received message: {args} from {address}")
             >>> osc_input.add_handler("/test", my_handler)
         """
 
-        def callback(address: str, *args: Any) -> None:
-            return handler(*args)
-
-        self._dispatcher.map(address, callback)  # pyright: ignore[reportUnknownMemberType]
+        self._dispatcher.map(address, handler)  # pyright: ignore[reportUnknownMemberType]
 
     def start(self, blocking: bool = False) -> None:
         """Start the OSC server to begin receiving messages.
