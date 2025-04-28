@@ -25,13 +25,19 @@
 
 ### Using pip
 
-**First, install [inputtino](https://github.com/games-on-whales/inputtino/tree/stable/bindings/python) which is a required dependency.**
+**For keyboard and mouse output, you must first install [inputtino](https://github.com/games-on-whales/inputtino/tree/stable/bindings/python).**
 
 ```bash
 # Install the base package
 pip install pamiq-io
 
-# For demo scripts, include the demo extras
+# Install with optional dependencies as needed
+pip install pamiq-io[inputtino]    # For keyboard and mouse output
+pip install pamiq-io[opencv]       # For video input
+pip install pamiq-io[osc]          # For OSC communication
+pip install pamiq-io[soundcard]    # For audio input/output
+
+# For running demo scripts
 sudo apt install libsndfile1
 pip install pamiq-io[demo]
 ```
@@ -96,20 +102,20 @@ A Docker configuration is provided for easy development and deployment.
 
 ```bash
 # Build a basic image with required dependencies
-FROM ubuntu:24.04
+FROM ubuntu:latest
 
 # Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip \
-    git cmake build-essential pkg-config libevdev-dev \
+    git cmake build-essential pkg-config libevdev-dev clang \
     libopencv-dev \
     libsndfile1 \
     pulseaudio \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pamiq-io
-RUN pip install pamiq-io[demo]
+# Install pamiq-io with desired optional dependencies
+RUN pip install pamiq-io[inputtino,opencv,osc,soundcard,demo]
 
 # For development, you may want to check our devcontainer configuration:
 # https://github.com/MLShukai/pamiq-io/blob/main/.devcontainer/Dockerfile
@@ -121,6 +127,7 @@ When running the container, you need privileged access for hardware devices:
 docker run --privileged -it your-pamiq-image
 ```
 
+> \[!IMPORTANT\]
 > ⚠️ **Note**: The `--privileged` flag is required for hardware access to input devices.
 
 ### PulseAudio in Docker
@@ -141,10 +148,11 @@ docker run --privileged -it \
 ### Video Input
 
 ```python
+# If OpenCV is installed:
 from pamiq_io.video import OpenCVVideoInput
+from pamiq_io.video.input.opencv import show_video_devices
 
 # List available video devices
-from pamiq_io.video.input.opencv import show_video_devices
 show_video_devices()
 
 # Capture from camera using default parameters
@@ -160,31 +168,24 @@ video_input = OpenCVVideoInput(camera=0, width=None, height=720, fps=None)
 frame = video_input.read()
 ```
 
-### Audio Input
+### Audio Input/Output
 
 ```python
-from pamiq_io.audio import SoundcardAudioInput
-
-# List available audio input devices
+# If SoundCard is installed:
+from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput
 from pamiq_io.audio.input.soundcard import show_all_input_devices
+from pamiq_io.audio.output.soundcard import show_all_output_devices
+
+# List available devices
 show_all_input_devices()
+show_all_output_devices()
 
 # Capture audio
 audio_input = SoundcardAudioInput(sample_rate=44100, channels=2)
 audio_data = audio_input.read(frame_size=1024)
-```
 
-### Audio Output
-
-```python
-from pamiq_io.audio import SoundcardAudioOutput
+# Play audio
 import numpy as np
-
-# List available audio output devices
-from pamiq_io.audio.output.soundcard import show_all_output_devices
-show_all_output_devices()
-
-# Play a simple sine wave
 sample_rate = 44100
 duration = 1.0  # seconds
 t = np.linspace(0, duration, int(sample_rate * duration), endpoint=False)
@@ -197,6 +198,7 @@ audio_output.write(sine_wave)
 ### OSC Communication
 
 ```python
+# If python-osc is installed:
 from pamiq_io.osc import OscOutput, OscInput
 
 # Send OSC messages
@@ -212,22 +214,33 @@ osc_input.add_handler("/test/address", handler)
 osc_input.start(blocking=False)
 ```
 
-### Keyboard and Mouse Simulation
+### Keyboard Simulation
+
+#### Inputtino
 
 ```python
-from pamiq_io.keyboard import InputtinoKeyboardOutput, KeyCode
-from pamiq_io.mouse import InputtinoMouseOutput
+# If inputtino is installed:
+from pamiq_io.keyboard import Key, InputtinoKeyboardOutput
 
-# Keyboard simulation
+# Using the InputtinoKeyboardOutput implementation
 keyboard = InputtinoKeyboardOutput()
-keyboard.press(KeyCode.CTRL, KeyCode.C)  # Press Ctrl+C
-keyboard.release(KeyCode.CTRL, KeyCode.C)  # Release Ctrl+C
+keyboard.press(Key.CTRL, Key.C)  # Press Ctrl+C
+keyboard.release(Key.CTRL, Key.C)  # Release Ctrl+C
+```
 
-# Mouse simulation
+### Mouse Simulation
+
+#### Inputtino
+
+```python
+# If inputtino is installed:
+from pamiq_io.mouse import MouseButton, InputtinoMouseOutput
+
+# Using the InputtinoMouseOutput implementation
 mouse = InputtinoMouseOutput(fps=100)
-mouse.move(100, 50)  # Move 100 pixels / sec right, 50 pixels / sec down
-mouse.press("left")
-mouse.release("left")
+mouse.move(100, 50)  # Move 100 pixels/sec right, 50 pixels/sec down
+mouse.press(MouseButton.LEFT)
+mouse.release(MouseButton.LEFT)
 ```
 
 ## 🧪 Demo Scripts
@@ -235,17 +248,17 @@ mouse.release("left")
 The repo includes several demo scripts to help you get started:
 
 ```bash
-# Audio demos
+# Audio demos (requires pamiq-io[soundcard,demo])
 python demos/soundcard_audio_input.py --list-devices
 python demos/soundcard_audio_output.py --frequency 440 --duration 3
 
-# Video demos
+# Video demos (requires pamiq-io[opencv,demo])
 python demos/opencv_video_input.py --camera 0 --output frame.png
 
-# OSC demos
+# OSC demos (requires pamiq-io[osc])
 python demos/osc_io.py
 
-# Input simulation demos
+# Input simulation demos (requires pamiq-io[inputtino])
 python demos/inputtino_keyboard_output.py
 python demos/inputtino_mouse_output.py --radius 100 --duration 5
 ```
