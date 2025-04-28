@@ -2,17 +2,14 @@
 
 import threading
 import time
-from typing import Literal
+from typing import override
 
-from inputtino import Mouse, MouseButton
+from inputtino import Mouse, MouseButton as _MouseButton
 
-__all__ = ["InputtinoMouseOutput", "MouseButton", "Button"]
-
-type ButtonLiteral = Literal["left", "right", "middle", "side", "extra"]
-type Button = ButtonLiteral | MouseButton
+from .base import MouseButton, MouseOutput
 
 
-class InputtinoMouseOutput:
+class InputtinoMouseOutput(MouseOutput):
     """Mouse output implementation for simulating mouse inputs with smooth
     movement.
 
@@ -28,6 +25,7 @@ class InputtinoMouseOutput:
         >>> mouse.release("left")  # Release left mouse button
     """
 
+    @override
     def __init__(self, fps: float = 100.0) -> None:
         """Initialize the MouseOutput with a virtual mouse.
 
@@ -37,6 +35,7 @@ class InputtinoMouseOutput:
         Args:
             fps: The target frame rate for mouse movement updates
         """
+        super().__init__()
         self._mouse = Mouse()
         self._interval = 1 / fps
 
@@ -48,10 +47,6 @@ class InputtinoMouseOutput:
         self._accumulated_dx = 0.0
         self._accumulated_dy = 0.0
 
-        # Button state management
-        self._button_states: dict[MouseButton, bool] = {}
-        self._button_changes: dict[MouseButton, bool] = {}
-
         # Thread control
         self._running = True
         self._velosity_lock = threading.Lock()
@@ -59,6 +54,7 @@ class InputtinoMouseOutput:
         self._thread = threading.Thread(target=self._update_loop, daemon=True)
         self._thread.start()
 
+    @override
     def move(self, vx: float, vy: float) -> None:
         """Set the mouse cursor movement velocity.
 
@@ -74,20 +70,19 @@ class InputtinoMouseOutput:
             self._dy = vy * self._interval
 
     @staticmethod
-    def convert_to_mouse_button(button: Button) -> MouseButton:
+    def convert_to_mouse_button(button: MouseButton) -> _MouseButton:
         """Convert a button identifier to a MouseButton enum value.
 
         Args:
-            button: The button to convert, either a string literal or a MouseButton enum
+            button: The button to convert.
 
         Returns:
-            The corresponding MouseButton enum value
+            The corresponding Inputtino MouseButton enum value
         """
-        if isinstance(button, MouseButton):
-            return button
-        return getattr(MouseButton, button.upper())
+        return getattr(_MouseButton, button.upper())
 
-    def press(self, button: Button) -> None:
+    @override
+    def press(self, button: MouseButton) -> None:
         """Press a mouse button.
 
         Args:
@@ -96,7 +91,8 @@ class InputtinoMouseOutput:
         with self._mouse_lock:
             self._mouse.press(self.convert_to_mouse_button(button))
 
-    def release(self, button: Button) -> None:
+    @override
+    def release(self, button: MouseButton) -> None:
         """Release a mouse button.
 
         Args:
