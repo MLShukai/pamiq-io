@@ -204,8 +204,8 @@ osc_output = OscOutput(host="127.0.0.1", port=9001)
 osc_output.send("/test/address", 42)
 
 # Receive OSC messages
-def handler(value):
-    print(f"Received: {value}")
+def handler(addr, value):
+    print(f"Received {value} from {addr}")
 
 osc_input = OscInput(host="127.0.0.1", port=9001)
 osc_input.add_handler("/test/address", handler)
