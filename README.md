@@ -100,7 +100,7 @@ A Docker configuration is provided for easy development and deployment.
 
 ### Basic usage:
 
-```bash
+```dockerfile
 # Build a basic image with required dependencies
 FROM ubuntu:latest
 
@@ -115,7 +115,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pamiq-io with desired optional dependencies
-RUN pip install pamiq-io[inputtino,opencv,osc,soundcard,demo]
+RUN pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable" && \
+    pip install pamiq-io[inputtino,opencv,osc,soundcard,demo]
 
 # For development, you may want to check our devcontainer configuration:
 # https://github.com/MLShukai/pamiq-io/blob/main/.devcontainer/Dockerfile
