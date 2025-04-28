@@ -47,14 +47,15 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def message_handler(value: Any) -> None:
+def message_handler(address: str, value: Any) -> None:
     """Handle received OSC messages.
 
     Args:
+        address: The address of OSC message.
         values: The values received in the OSC message.
     """
     logger = logging.getLogger("osc-receiver")
-    logger.info(f"Received message: {value}")
+    logger.info(f"Received message: {value} from {address}")
 
 
 def main() -> None:

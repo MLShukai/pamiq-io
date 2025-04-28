@@ -1,19 +1,13 @@
 [project]
 name = "pamiq-io"
-version = "0.3.0"
+version = "0.4.1"
 description = "Versatile I/O library for Python, providing easy access to audio, video, and input device capabilities."
 readme = "README.md"
 authors = [
     { name = "Geson-anko", email = "59220704+Geson-anko@users.noreply.github.com" }
 ]
 requires-python = ">=3.12"
-dependencies = [
-    "inputtino-python",
-    "numpy>=2.2.4",
-    "opencv-python>=4.11.0.86",
-    "python-osc>=1.9.3",
-    "soundcard>=0.4.4",
-]
+dependencies = []
 
 keywords = [
   "AI",
@@ -64,6 +58,18 @@ pamiq-io-show-soundcard-available-output-devices = "pamiq_io.audio.output.soundc
 demo = [
     "pillow>=11.1.0",
     "soundfile>=0.13.1",
+]
+inputtino = [
+    "inputtino-python>=0.1.0",
+]
+opencv = [
+    "opencv-python>=4.11.0.86",
+]
+osc = [
+    "python-osc>=1.9.3",
+]
+soundcard = [
+    "soundcard>=0.4.4",
 ]
 
 [build-system]

@@ -1,4 +1,4 @@
-name: Installation Test
+name: Optional Dependencies Installation Test
 
 on:
   push:
@@ -10,8 +10,42 @@ env:
   PYTHON_VERSION: "3.12"
 
 jobs:
-  run_install:
+  test-optional-dependencies:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dependency: basic
+            install: python -m pip install .
+            import: python -c "import pamiq_io; print(pamiq_io.__version__)"
+
+          - dependency: inputtino
+            setup: sudo apt-get install -y --no-install-recommends git make cmake build-essential pkg-config libevdev-dev
+            install: |
+              python -m pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
+              python -m pip install .[inputtino]
+            import: |
+              python -c "from pamiq_io.keyboard import InputtinoKeyboardOutput"
+              python -c "from pamiq_io.mouse import InputtinoMouseOutput"
+          - dependency: opencv
+            setup: sudo apt-get install -y --no-install-recommends libopencv-dev
+            install: python -m pip install .[opencv]
+            import: python -c "from pamiq_io.video import OpenCVVideoInput"
+
+          - dependency: osc
+            install: python -m pip install .[osc]
+            import: python -c "from pamiq_io.osc import OscOutput, OscInput"
+
+          - dependency: soundcard
+            setup: |
+              sudo apt-get install -y --no-install-recommends pulseaudio
+              pulseaudio --start
+            install: python -m pip install .[soundcard]
+            import: |
+              echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
+              python ./script.py
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,12 +53,15 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install System dependency
-        run: |
-          sudo apt install git cmake build-essential pkg-config libevdev-dev
-          python -m pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
+      - name: Update apt repositories
+        run: sudo apt-get update
 
-      - name: Install pamiq-io
-        run: |
-          python -m pip install .
-          python -c "import pamiq_io;print(pamiq_io.__version__)"
+      - name: Install system dependencies
+        if: matrix.setup != ''
+        run: ${{ matrix.setup }}
+
+      - name: Install pamiq-io with dependencies
+        run: ${{ matrix.install }}
+
+      - name: Test imports
+        run: ${{ matrix.import }}

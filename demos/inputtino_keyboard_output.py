@@ -8,7 +8,7 @@ releasing W, A, S, D keys sequentially with a 1-second delay.
 import logging
 import time
 
-from pamiq_io.keyboard import InputtinoKeyboardOutput
+from pamiq_io.keyboard import InputtinoKeyboardOutput, Key
 
 
 def setup_logging() -> None:
@@ -31,7 +31,7 @@ def main() -> None:
     keyboard = InputtinoKeyboardOutput()
 
     # Define the sequence of keys to press
-    keys = ["W", "A", "S", "D"]
+    keys = [Key.W, Key.A, Key.S, Key.D]
 
     try:
         # Press each key in sequence with a 1-second delay

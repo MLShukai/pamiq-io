@@ -3,6 +3,7 @@ revision = 2
 requires-python = ">=3.12"
 resolution-markers = [
     "sys_platform == 'darwin'",
+    "python_version < '0'",
     "platform_machine == 'aarch64' and sys_platform == 'linux'",
     "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
 ]
@@ -216,20 +217,25 @@ wheels = [
 
 [[package]]
 name = "pamiq-io"
-version = "0.3.0"
+version = "0.4.1"
 source = { editable = "." }
-dependencies = [
-    { name = "inputtino-python" },
-    { name = "numpy" },
-    { name = "opencv-python" },
-    { name = "python-osc" },
-    { name = "soundcard" },
-]
 
 [package.optional-dependencies]
 demo = [
     { name = "pillow" },
     { name = "soundfile" },
+]
+inputtino = [
+    { name = "inputtino-python" },
+]
+opencv = [
+    { name = "opencv-python" },
+]
+osc = [
+    { name = "python-osc" },
+]
+soundcard = [
+    { name = "soundcard" },
 ]
 
 [package.dev-dependencies]
@@ -243,15 +249,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "inputtino-python", git = "https://github.com/games-on-whales/inputtino.git?subdirectory=bindings%2Fpython" },
-    { name = "numpy", specifier = ">=2.2.4" },
-    { name = "opencv-python", specifier = ">=4.11.0.86" },
+    { name = "inputtino-python", marker = "extra == 'inputtino'", git = "https://github.com/games-on-whales/inputtino.git?subdirectory=bindings%2Fpython" },
+    { name = "opencv-python", marker = "extra == 'opencv'", specifier = ">=4.11.0.86" },
     { name = "pillow", marker = "extra == 'demo'", specifier = ">=11.1.0" },
-    { name = "python-osc", specifier = ">=1.9.3" },
-    { name = "soundcard", specifier = ">=0.4.4" },
+    { name = "python-osc", marker = "extra == 'osc'", specifier = ">=1.9.3" },
+    { name = "soundcard", marker = "extra == 'soundcard'", specifier = ">=0.4.4" },
     { name = "soundfile", marker = "extra == 'demo'", specifier = ">=0.13.1" },
 ]
-provides-extras = ["demo"]
+provides-extras = ["demo", "inputtino", "opencv", "osc", "soundcard"]
 
 [package.metadata.requires-dev]
 dev = [

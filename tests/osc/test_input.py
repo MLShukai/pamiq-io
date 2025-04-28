@@ -42,7 +42,7 @@ class TestOscInput:
     def test_add_handler(self, mock_dispatcher):
         """Tests adding a handler function for an OSC address pattern."""
 
-        def test_handler(*args):
+        def test_handler(addr: str, *args):
             pass
 
         osc_in = OscInput()
