@@ -4,8 +4,6 @@ from .output import AudioOutput
 __all__ = ["AudioInput", "AudioOutput"]
 
 try:
-    import soundcard as _
-
     from .input.soundcard import SoundcardAudioInput
     from .output.soundcard import SoundcardAudioOutput
 

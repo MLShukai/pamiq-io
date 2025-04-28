@@ -1,6 +1,4 @@
 try:
-    import pythonosc as _
-
     from .input import OscInput
     from .output import OscOutput
 
