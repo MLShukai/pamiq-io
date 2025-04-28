@@ -14,14 +14,7 @@ class InputtinoKeyboardOutput(KeyboardOutput):
     """A high-level interface for simulating keyboard inputs.
 
     This class wraps the inputtino Keyboard class to provide a more
-    convenient interface for simulating keyboard inputs. It supports
-    pressing and releasing multiple keys at once.
-
-    Examples:
-        >>> from keyboard_output import KeyboardOutput, KeyCode
-        >>> kb = KeyboardOutput()
-        >>> kb.press(Key.CTRL, Key.A)  # Press Ctrl+A
-        >>> kb.release(Key.CTRL, Key.A)  # Release Ctrl+A
+    convenient interface for simulating keyboard inputs.
     """
 
     def __init__(self) -> None:
