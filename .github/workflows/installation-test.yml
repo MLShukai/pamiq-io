@@ -40,7 +40,7 @@ jobs:
           - dependency: soundcard
             setup: |
               sudo apt-get install -y --no-install-recommends pulseaudio
-              sudo pulseaudio --start
+              pulseaudio --start
             install: python -m pip install .[soundcard]
             import: |
               echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
@@ -49,7 +49,7 @@ jobs:
           - dependency: all
             setup: |
               sudo apt-get install -y --no-install-recommends git make cmake build-essential pkg-config libevdev-dev pulseaudio libopencv-dev
-              sudo pulseaudio --start
+              pulseaudio --start
             pre_install: python -m pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
             install: python -m pip install .[all]
             import: |
