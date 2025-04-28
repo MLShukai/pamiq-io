@@ -1,4 +1,9 @@
-from .input import OscInput
-from .output import OscOutput
+try:
+    import pythonosc as _
 
-__all__ = ["OscOutput", "OscInput"]
+    from .input import OscInput
+    from .output import OscOutput
+
+    __all__ = ["OscOutput", "OscInput"]
+except ModuleNotFoundError:
+    pass
