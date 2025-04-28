@@ -40,7 +40,9 @@ jobs:
           - dependency: soundcard
             setup: sudo apt-get install -y --no-install-recommends pulseaudio
             install: python -m pip install .[soundcard]
-            import: python -c "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput"
+            import: |
+              echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
+              python ./script.py
 
           - dependency: all
             setup: sudo apt-get install -y --no-install-recommends git make cmake build-essential pkg-config libevdev-dev libopencv-dev libsndfile1 pulseaudio
@@ -51,7 +53,8 @@ jobs:
               python -c "from pamiq_io.mouse import InputtinoMouseOutput"
               python -c "from pamiq_io.video import OpenCVVideoInput"
               python -c "from pamiq_io.osc import OscOutput, OscInput"
-              python -c "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput"
+              echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
+              python ./script.py
 
     steps:
       - uses: actions/checkout@v4
