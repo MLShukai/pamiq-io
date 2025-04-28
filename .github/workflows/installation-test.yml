@@ -1,4 +1,4 @@
-name: Installation Test
+name: Optional Dependencies Installation Test
 
 on:
   push:
@@ -10,8 +10,49 @@ env:
   PYTHON_VERSION: "3.12"
 
 jobs:
-  run_install:
+  test-optional-dependencies:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dependency: basic
+            install: python -m pip install .
+            import: python -c "import pamiq_io; print(pamiq_io.__version__)"
+
+          - dependency: inputtino
+            setup: sudo apt-get install -y --no-install-recommends git make cmake build-essential pkg-config libevdev-dev
+            pre_install: python -m pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
+            install: python -m pip install .[inputtino]
+            import: |
+              python -c "from pamiq_io.keyboard import InputtinoKeyboardOutput"
+              python -c "from pamiq_io.mouse import InputtinoMouseOutput"
+          - dependency: opencv
+            setup: sudo apt-get install -y --no-install-recommends libopencv-dev
+            install: python -m pip install .[opencv]
+            import: python -c "from pamiq_io.video import OpenCVVideoInput"
+
+          - dependency: osc
+            setup: sudo apt-get install -y --no-install-recommends git make
+            install: python -m pip install .[osc]
+            import: python -c "from pamiq_io.osc import OscOutput, OscInput"
+
+          - dependency: soundcard
+            setup: sudo apt-get install -y --no-install-recommends pulseaudio
+            install: python -m pip install .[soundcard]
+            import: python -c "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput"
+
+          - dependency: all
+            setup: sudo apt-get install -y --no-install-recommends git make cmake build-essential pkg-config libevdev-dev libopencv-dev libsndfile1 pulseaudio
+            pre_install: python -m pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
+            install: python -m pip install .[inputtino,opencv,osc,soundcard,demo]
+            import: |
+              python -c "from pamiq_io.keyboard import InputtinoKeyboardOutput"
+              python -c "from pamiq_io.mouse import InputtinoMouseOutput"
+              python -c "from pamiq_io.video import OpenCVVideoInput"
+              python -c "from pamiq_io.osc import OscOutput, OscInput"
+              python -c "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput"
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,7 +60,19 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install pamiq-io
-        run: |
-          python -m pip install .
-          python -c "import pamiq_io;print(pamiq_io.__version__)"
+      - name: Update apt repositories
+        run: sudo apt-get update
+
+      - name: Install system dependencies
+        if: matrix.setup != ''
+        run: ${{ matrix.setup }}
+
+      - name: Pre-install dependencies if needed
+        if: matrix.pre_install != ''
+        run: ${{ matrix.pre_install }}
+
+      - name: Install pamiq-io with dependencies
+        run: ${{ matrix.install }}
+
+      - name: Test imports
+        run: ${{ matrix.import }}
