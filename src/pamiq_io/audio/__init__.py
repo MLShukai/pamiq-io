@@ -1,4 +1,15 @@
-from .input import AudioInput, SoundcardAudioInput
-from .output import AudioOutput, SoundcardAudioOutput
+from .input import AudioInput
+from .output import AudioOutput
 
-__all__ = ["AudioInput", "SoundcardAudioInput", "AudioOutput", "SoundcardAudioOutput"]
+__all__ = ["AudioInput", "AudioOutput"]
+
+try:
+    import soundcard as _
+
+    from .input.soundcard import SoundcardAudioInput
+    from .output.soundcard import SoundcardAudioOutput
+
+    __all__.extend(["SoundcardAudioInput", "SoundcardAudioOutput"])
+
+except ModuleNotFoundError:
+    pass
