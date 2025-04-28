@@ -71,6 +71,13 @@ osc = [
 soundcard = [
     "soundcard>=0.4.4",
 ]
+all = [
+    "inputtino-python>=0.1.0",
+    "opencv-python>=4.11.0.86",
+    "python-osc>=1.9.3",
+    "soundcard>=0.4.4",
+]
+
 
 [build-system]
 requires = ["hatchling"]

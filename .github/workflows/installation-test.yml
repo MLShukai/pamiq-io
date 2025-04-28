@@ -33,7 +33,6 @@ jobs:
             import: python -c "from pamiq_io.video import OpenCVVideoInput"
 
           - dependency: osc
-            setup: sudo apt-get install -y --no-install-recommends git make
             install: python -m pip install .[osc]
             import: python -c "from pamiq_io.osc import OscOutput, OscInput"
 
@@ -46,6 +45,20 @@ jobs:
               echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
               python ./script.py
 
+          - dependency: all
+            setup: |
+              sudo apt-get install -y --no-install-recommends git make cmake build-essential pkg-config libevdev-dev pulseaudio libopencv-dev
+              pulseaudio --start
+            pre_install: python -m pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
+            install: python -m pip install .[all]
+            import: |
+              python -c "import pamiq_io; print(pamiq_io.__version__)"
+              python -c "from pamiq_io.keyboard import InputtinoKeyboardOutput"
+              python -c "from pamiq_io.mouse import InputtinoMouseOutput"
+              python -c "from pamiq_io.osc import OscOutput, OscInput"
+              python -c "from pamiq_io.video import OpenCVVideoInput"
+              echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
+              python ./script.py
     steps:
       - uses: actions/checkout@v4
 
