@@ -19,11 +19,6 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install System dependency
-        run: |
-          sudo apt install git cmake build-essential pkg-config libevdev-dev
-          python -m pip install "git+https://github.com/games-on-whales/inputtino.git#subdirectory=bindings/python&branch=stable"
-
       - name: Install pamiq-io
         run: |
           python -m pip install .
