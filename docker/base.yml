@@ -1,6 +1,7 @@
 services:
   dev:
-    container_name: pamiq-io-dev
+    container_name: pamiq-io-dev-${USER}
+    image: pamiq-io:${USER}
     build:
       context: ../
       dockerfile: ./docker/Dockerfile
