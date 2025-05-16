@@ -113,6 +113,7 @@ jobs:
             install: python -m pip install .[directinput]
             import: |
               python -c "from pamiq_io.mouse import DirectInputMouseOutput"
+              python -c "from pamiq_io.keyboard import DirectInputKeyboardOutput"
 
     steps:
       - uses: actions/checkout@v4
