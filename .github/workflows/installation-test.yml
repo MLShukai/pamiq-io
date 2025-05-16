@@ -111,7 +111,8 @@ jobs:
 
           - dependency: directinput
             install: python -m pip install .[directinput]
-            import: echo "DirectInput dependency installed successfully"
+            import: |
+              python -c "from pamiq_io.mouse import DirectInputMouseOutput"
 
     steps:
       - uses: actions/checkout@v4
