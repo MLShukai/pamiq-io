@@ -41,7 +41,6 @@ jobs:
               python -c "from pamiq_io.keyboard import InputtinoKeyboardOutput"
               python -c "from pamiq_io.mouse import InputtinoMouseOutput"
           - dependency: opencv
-            setup: sudo apt-get install -y --no-install-recommends libopencv-dev
             install: python -m pip install .[opencv]
             import: python -c "from pamiq_io.video import OpenCVVideoInput"
 
