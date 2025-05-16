@@ -5,6 +5,12 @@ This script demonstrates mouse movement by drawing a circle with the
 cursor over 5 seconds.
 """
 
+import sys
+
+if sys.platform != "linux":
+    print("This script only runs on Linux. Exiting...")
+    sys.exit(1)
+
 import argparse
 import logging
 import math
