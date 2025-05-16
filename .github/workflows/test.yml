@@ -54,9 +54,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y --no-install-recommends git cmake build-essential pkg-config libevdev-dev pulseaudio
+          sudo apt-get install -y git cmake build-essential pkg-config libevdev-dev pulseaudio
           pulseaudio --start
-          sleep 5
 
       - name: Install dependencies
         run: uv sync --all-extras
