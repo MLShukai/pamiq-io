@@ -3,8 +3,20 @@ name: Optional Dependencies Installation Test
 on:
   push:
     branches: [main, stable]
+    paths:
+      - "src/**/*.py"
+      - "src/**/*.pyi"
+      - ".github/workflows/installation-test.yaml"
+      - "pyproject.toml"
+      - "uv.lock"
   pull_request:
     branches: [main, stable]
+    paths:
+      - "src/**/*.py"
+      - "src/**/*.pyi"
+      - ".github/workflows/installation-test.yaml"
+      - "pyproject.toml"
+      - "uv.lock"
 
 env:
   PYTHON_VERSION: "3.12"
