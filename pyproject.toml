@@ -60,7 +60,7 @@ demo = [
     "soundfile>=0.13.1",
 ]
 inputtino = [
-    "inputtino-python>=0.1.0",
+    "inputtino-python>=0.1.0;sys_platform=='linux'",
 ]
 opencv = [
     "opencv-python>=4.11.0.86",
