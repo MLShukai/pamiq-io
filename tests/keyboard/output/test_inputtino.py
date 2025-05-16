@@ -1,5 +1,10 @@
 """Tests for the keyboard_output module."""
 
+from tests.helpers import skip_if_platform_is_not_linux
+
+skip_if_platform_is_not_linux()
+
+
 import inputtino as _core
 import pytest
 

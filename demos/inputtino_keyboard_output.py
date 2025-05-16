@@ -5,6 +5,12 @@ This script demonstrates basic keyboard input simulation by pressing and
 releasing W, A, S, D keys sequentially with a 1-second delay.
 """
 
+import sys
+
+if sys.platform != "linux":
+    print("This script only runs on Linux. Exiting...")
+    sys.exit(1)
+
 import logging
 import time
 

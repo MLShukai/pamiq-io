@@ -10,7 +10,7 @@ env:
   PYTHON_VERSION: "3.12"
 
 jobs:
-  test-optional-dependencies:
+  test-linux-dependencies:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -46,6 +46,10 @@ jobs:
               echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
               python ./script.py
 
+          - dependency: directinput
+            install: python -m pip install .[directinput]
+            import: echo "DirectInput dependency installed successfully"
+
     steps:
       - uses: actions/checkout@v4
 
@@ -59,6 +63,51 @@ jobs:
       - name: Install system dependencies
         if: matrix.setup != ''
         run: ${{ matrix.setup }}
+
+      - name: Install pamiq-io with dependencies
+        run: ${{ matrix.install }}
+
+      - name: Test imports
+        run: ${{ matrix.import }}
+
+  test-windows-dependencies:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dependency: basic
+            install: python -m pip install .
+            import: python -c "import pamiq_io; print(pamiq_io.__version__)"
+
+          - dependency: inputtino
+            install: python -m pip install .[inputtino]
+            import: echo "Inputtino dependency installed successfully"
+
+          - dependency: opencv
+            install: python -m pip install .[opencv]
+            import: python -c "from pamiq_io.video import OpenCVVideoInput"
+
+          - dependency: osc
+            install: python -m pip install .[osc]
+            import: python -c "from pamiq_io.osc import OscOutput, OscInput"
+
+          - dependency: soundcard
+            install: python -m pip install .[soundcard]
+            import: |
+              echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
+              python ./script.py
+
+          - dependency: directinput
+            install: python -m pip install .[directinput]
+            import: echo "DirectInput dependency installed successfully"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install pamiq-io with dependencies
         run: ${{ matrix.install }}
