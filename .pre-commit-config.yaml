@@ -78,6 +78,7 @@ repos:
       - id: codespell
         args:
           - --skip=*.ipynb**
+          - --ignore-words-list=doubleClick
 
   # Additional Python checks
   - repo: https://github.com/pre-commit/pygrep-hooks
