@@ -11,3 +11,11 @@ if sys.platform == "linux":
         __all__.extend(["InputtinoMouseOutput"])
     except ModuleNotFoundError:
         pass
+
+if sys.platform == "win32":
+    try:
+        from .output.directinput import DirectInputMouseOutput
+
+        __all__.extend(["DirectInputMouseOutput"])
+    except ModuleNotFoundError:
+        pass
