@@ -71,6 +71,9 @@ osc = [
 soundcard = [
     "soundcard>=0.4.4",
 ]
+directinput = [
+    "pydirectinput>=1.0.4;sys_platform=='win32'",
+]
 
 [build-system]
 requires = ["hatchling"]
