@@ -289,9 +289,14 @@ python demos/opencv_video_input.py --camera 0 --output frame.png
 # OSC demos (requires pamiq-io[osc])
 python demos/osc_io.py
 
-# Input simulation demos (Linux only, requires pamiq-io[inputtino])
+# Input simulation demos
+# Linux, requires pamiq-io[inputtino]
 python demos/inputtino_keyboard_output.py
 python demos/inputtino_mouse_output.py --radius 100 --duration 5
+
+# Windows, requires pamiq-io[directinput]
+python demos/directinput_keyboard_output.py
+python demos/directinput_mouse_output.py --radius 100 --duration 5
 ```
 
 ## 📝 License
