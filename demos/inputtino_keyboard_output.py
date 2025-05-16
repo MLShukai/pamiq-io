@@ -33,6 +33,12 @@ def main() -> None:
 
     logger.info("Starting keyboard input simulation demo")
 
+    # Countdown before starting
+    logger.info("Starting in 5 seconds. Please focus on your target application...")
+    for i in range(5, 0, -1):
+        print(f"{i}...")
+        time.sleep(1)
+
     # Initialize the keyboard output
     keyboard = InputtinoKeyboardOutput()
 

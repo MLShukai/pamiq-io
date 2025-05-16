@@ -65,8 +65,10 @@ def main() -> None:
         f"Starting mouse circle demo (radius: {args.radius}px, duration: {args.duration}s)"
     )
 
+    # Countdown before starting
+    logger.info("Starting in 5 seconds. Please focus on your target application...")
     for i in range(5, 0, -1):
-        print(i)
+        print(f"{i}...")
         time.sleep(1)
 
     # Initialize the mouse output with specified fps
