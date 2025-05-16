@@ -41,7 +41,6 @@ class Key(Enum):
     # Standard Keys
     BACKSPACE = auto()
     TAB = auto()
-    CLEAR = auto()
     ENTER = auto()
     SHIFT = auto()
     CTRL = auto()
