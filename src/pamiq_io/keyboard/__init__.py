@@ -11,3 +11,11 @@ if sys.platform == "linux":
         __all__.extend(["InputtinoKeyboardOutput"])
     except ModuleNotFoundError:
         pass
+
+if sys.platform == "win32":
+    try:
+        from .output.directinput import DirectInputKeyboardOutput
+
+        __all__.extend(["DirectInputKeyboardOutput"])
+    except ModuleNotFoundError:
+        pass

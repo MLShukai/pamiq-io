@@ -1,79 +1,76 @@
-"""Tests for the DirectInputMouseOutput class."""
+"""Tests for the DirectInputKeyboardOutput class."""
 
 from tests.helpers import skip_if_platform_is_not_windows
 
 skip_if_platform_is_not_windows()
 
+import pydirectinput
 import pytest
 from pytest_mock import MockerFixture
 
-from pamiq_io.mouse.output.directinput import DirectInputMouseOutput, MouseButton
+from pamiq_io.keyboard.output.directinput import DirectInputKeyboardOutput, Key
 
 
-class TestDirectInputMouseOutput:
-    """Tests for the DirectInputMouseOutput class."""
+class TestDirectInputKeyboardOutput:
+    """Tests for the DirectInputKeyboardOutput class."""
 
     @pytest.fixture
     def mock_directinput(self, mocker: MockerFixture):
         """Create a mock for the pydirectinput module."""
-        mock = mocker.patch("pamiq_io.mouse.output.directinput.pydirectinput")
-        # Set up PRIMARY and SECONDARY attributes
-        mock.PRIMARY = "x1"
-        mock.SECONDARY = "x2"
-        return mock
+        return mocker.patch("pamiq_io.keyboard.output.directinput.pydirectinput")
 
-    def test_init_sets_pause(self, mock_directinput):
-        """Test that init properly sets pydirectinput.PAUSE."""
-        fps = 30.0
-        DirectInputMouseOutput(fps=fps)
-        assert mock_directinput.PAUSE == 1 / fps
+    @pytest.mark.parametrize(
+        "key, expected",
+        [
+            (Key.A, "a"),
+            (Key.CTRL, "ctrl"),
+            (Key.LEFT_SHIFT, "shiftleft"),
+            (Key.ENTER, "enter"),
+            (Key.F1, "f1"),
+            (Key.ESC, "esc"),
+            (Key.SPACE, "space"),
+            (Key.SEMICOLON, ";"),
+            (Key.LEFT_SUPER, "winleft"),
+        ],
+    )
+    def test_to_directinput_key(self, key, expected):
+        """Test converting Key enum to pydirectinput key strings."""
+        assert DirectInputKeyboardOutput.to_directinput_key(key) == expected
 
-    def test_convert_to_directinput_button(self, mock_directinput):
-        """Test converting to DirectInput button strings."""
-        # Test regular buttons
+    @pytest.mark.parametrize("key", Key)
+    def test_to_directinput_key_in_key_mapping(self, key):
+        """Test converting Key enum to pydirectinput key strings."""
         assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.LEFT)
-            == "left"
-        )
-        assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.RIGHT)
-            == "right"
-        )
-        assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.MIDDLE)
-            == "middle"
-        )
-
-        # Test special case buttons
-        assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.SIDE)
-            == mock_directinput.PRIMARY
-        )
-        assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.EXTRA)
-            == mock_directinput.SECONDARY
+            DirectInputKeyboardOutput.to_directinput_key(key)
+            in pydirectinput.KEYBOARD_MAPPING
         )
 
     def test_press(self, mock_directinput):
-        """Test pressing a mouse button."""
-        mouse_output = DirectInputMouseOutput()
+        """Test pressing a key."""
+        kb_output = DirectInputKeyboardOutput()
+        kb_output.press(Key.A)
+        mock_directinput.keyDown.assert_called_once_with("a")
 
-        # Test with standard button
-        mouse_output.press(MouseButton.RIGHT)
-        mock_directinput.mouseDown.assert_called_with(button="right")
+    def test_press_multiple_keys(self, mock_directinput):
+        """Test pressing multiple keys at once."""
+        kb_output = DirectInputKeyboardOutput()
+        kb_output.press(Key.CTRL, Key.C)
 
-        # Test with special button
-        mouse_output.press(MouseButton.SIDE)
-        mock_directinput.mouseDown.assert_called_with(button=mock_directinput.PRIMARY)
+        assert mock_directinput.keyDown.call_count == 2
+        mock_directinput.keyDown.assert_any_call("ctrl")
+        mock_directinput.keyDown.assert_any_call("c")
 
     def test_release(self, mock_directinput):
-        """Test releasing a mouse button."""
-        mouse_output = DirectInputMouseOutput()
+        """Test releasing a key."""
+        kb_output = DirectInputKeyboardOutput()
+        kb_output.release(Key.A)
+        mock_directinput.keyUp.assert_called_once_with("a")
 
-        # Test with standard button
-        mouse_output.release(MouseButton.MIDDLE)
-        mock_directinput.mouseUp.assert_called_with(button="middle")
+    def test_release_multiple_keys(self, mock_directinput):
+        """Test releasing multiple keys at once."""
+        kb_output = DirectInputKeyboardOutput()
+        kb_output.release(Key.CTRL, Key.C)
 
-        # Test with special button
-        mouse_output.release(MouseButton.EXTRA)
-        mock_directinput.mouseUp.assert_called_with(button=mock_directinput.SECONDARY)
+        assert mock_directinput.keyUp.call_count == 2
+        mock_directinput.keyUp.assert_any_call("ctrl")
+        mock_directinput.keyUp.assert_any_call("c")

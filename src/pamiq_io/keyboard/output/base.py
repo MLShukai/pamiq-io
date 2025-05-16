@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import re
 from abc import ABC, abstractmethod
 from enum import Enum, auto
+from functools import cache
+from typing import Self
 
 
 class KeyboardOutput(ABC):
@@ -139,3 +142,87 @@ class Key(Enum):
     BACKSLASH = auto()
     CLOSE_BRACKET = auto()
     QUOTE = auto()
+
+    @classmethod
+    @cache
+    def number_keys(cls) -> set[Self]:
+        """Get a set of all number keys.
+
+        Returns:
+            A set containing all number keys (KEY_0 through KEY_9).
+        """
+        out: set[Self] = set()
+        for key in cls:
+            if re.match(r"^KEY_\d$", key.name):
+                out.add(key)
+        return out
+
+    @classmethod
+    @cache
+    def function_keys(cls) -> set[Self]:
+        """Get a set of all function keys.
+
+        Returns:
+            A set containing all function keys (F1 through F12).
+        """
+        out: set[Self] = set()
+        for key in cls:
+            if re.match(r"^F\d{1,2}$", key.name):
+                out.add(key)
+        return out
+
+    @classmethod
+    @cache
+    def letter_keys(cls) -> set[Self]:
+        """Get a set of all letter keys.
+
+        Returns:
+            A set containing all letter keys (A through Z).
+        """
+        out: set[Self] = set()
+        for key in cls:
+            if len(key.name) == 1 and key.name.isalpha():
+                out.add(key)
+        return out
+
+    @classmethod
+    @cache
+    def super_keys(cls) -> set[Self]:
+        """Get a set of all super keys.
+
+        Returns:
+            A set containing all super keys (LEFT_SUPER, RIGHT_SUPER).
+        """
+        return {key for key in cls if key.name.endswith("SUPER")}
+
+    @classmethod
+    @cache
+    def shift_keys(cls) -> set[Self]:
+        """Get a set of all shift keys.
+
+        Returns:
+            A set containing all shift keys (SHIFT, LEFT_SHIFT, RIGHT_SHIFT).
+        """
+        return {key for key in cls if key.name.endswith("SHIFT")}
+
+    @classmethod
+    @cache
+    def alt_keys(cls) -> set[Self]:
+        """Get a set of all alt keys.
+
+        Returns:
+            A set containing all alt keys (ALT, LEFT_ALT, RIGHT_ALT).
+        """
+        return {key for key in cls if key.name.endswith("ALT")}
+
+    @classmethod
+    @cache
+    def ctrl_keys(cls) -> set[Self]:
+        """Get a set of all control keys.
+
+        Returns:
+            A set containing all control keys (CTRL, LEFT_CONTROL, RIGHT_CONTROL).
+        """
+        return {
+            key for key in cls if key.name.endswith("CONTROL") or key.name == "CTRL"
+        }
