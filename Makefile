@@ -31,14 +31,13 @@ run: format test type ## Run all workflow
 ENABLE_AUDIO ?= true
 
 # Compose files
-BASE_COMPOSE  := -f docker/base.yml
-PULSEAUDIO_COMPOSE := -f docker/pulseaudio.yml
+BASE_COMPOSE  := -f docker-compose.yml
+PULSEAUDIO_COMPOSE := -f docker-compose.pulseaudio.yml
 
 # Auto-detection capabilities.
 HAS_PULSEAUDIO := $(shell pactl info > /dev/null 2>&1 && echo true || echo false)
 
 # -f options
-COMPOSE_FILES := $(BASE_COMPOSE)
 ifeq ($(ENABLE_AUDIO),true)
   ifeq ($(HAS_PULSEAUDIO),true)
     COMPOSE_FILES += $(PULSEAUDIO_COMPOSE)
@@ -46,7 +45,7 @@ ifeq ($(ENABLE_AUDIO),true)
 endif
 
 docker-build: ## Build docker images
-	docker compose -f docker/base.yml build --no-cache
+	docker compose $(BASE_COMPOSE) build --no-cache
 
 docker-up: ## Start docker containers (ENABLE_GPU=false to disable GPU, ENABLE_AUDIO=false to disable audio)
 	@echo "→ Starting dev container"
@@ -54,10 +53,10 @@ docker-up: ## Start docker containers (ENABLE_GPU=false to disable GPU, ENABLE_A
 	docker compose $(COMPOSE_FILES) up -d
 
 docker-down: ## Stop docker containers
-	docker compose -f docker/base.yml down
+	docker compose $(BASE_COMPOSE) down
 
 docker-down-volume:  ## Stop docker containers with removing volumes.
-	docker compose -f docker/base.yml down -v
+	docker compose $(BASE_COMPOSE) down -v
 
 docker-attach: ## Attach to development container
-	docker compose -f docker/base.yml exec dev bash
+	docker compose $(BASE_COMPOSE) exec dev bash

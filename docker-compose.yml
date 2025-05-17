@@ -1,10 +1,9 @@
 services:
   dev:
-    container_name: pamiq-io-dev-${USER}
     image: pamiq-io:${USER}
     build:
-      context: ../
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - pamiq-io:/workspace
       - uv_cache:/root/.cache/uv
