@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-"""Demo script for InputtinoMouseOutput.
+"""Demo script for DirectInputMouseOutput.
 
 This script demonstrates mouse movement by drawing a circle with the
 cursor over 5 seconds.
@@ -7,8 +6,8 @@ cursor over 5 seconds.
 
 import sys
 
-if sys.platform != "linux":
-    print("This script only runs on Linux. Exiting...")
+if sys.platform != "win32":
+    print("This script only runs on Windows. Exiting...")
     sys.exit(1)
 
 import argparse
@@ -16,7 +15,7 @@ import logging
 import math
 import time
 
-from pamiq_io.mouse import InputtinoMouseOutput
+from pamiq_io.mouse import DirectInputMouseOutput
 
 
 def setup_logging() -> None:
@@ -50,8 +49,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--fps",
         type=float,
-        default=100.0,
-        help="Frames per second for velocity updates (default: 100.0)",
+        default=60.0,
+        help="Frames per second for velocity updates (default: 60.0)",
     )
     return parser.parse_args()
 
@@ -73,7 +72,7 @@ def main() -> None:
         time.sleep(1)
 
     # Initialize the mouse output with specified fps
-    mouse = InputtinoMouseOutput(fps=args.fps)
+    mouse = DirectInputMouseOutput(fps=args.fps)
 
     # Parameters
     radius = args.radius

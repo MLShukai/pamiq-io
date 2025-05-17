@@ -1,6 +1,6 @@
 [project]
 name = "pamiq-io"
-version = "0.4.1"
+version = "0.5.0"
 description = "Versatile I/O library for Python, providing easy access to audio, video, and input device capabilities."
 readme = "README.md"
 authors = [
@@ -60,7 +60,7 @@ demo = [
     "soundfile>=0.13.1",
 ]
 inputtino = [
-    "inputtino-python>=0.1.0",
+    "inputtino-python>=0.1.0;sys_platform=='linux'",
 ]
 opencv = [
     "opencv-python>=4.11.0.86",
@@ -70,6 +70,9 @@ osc = [
 ]
 soundcard = [
     "soundcard>=0.4.4",
+]
+directinput = [
+    "pydirectinput>=1.0.4;sys_platform=='win32'",
 ]
 
 [build-system]

@@ -1,0 +1,64 @@
+name: Type Check
+
+on:
+  push:
+    branches: [main, stable]
+    paths:
+      - "**/*.py"
+      - "**/*.pyi"
+      - ".github/workflows/type-check.yml"
+      - "pyproject.toml"
+      - "uv.lock"
+  pull_request:
+    branches: [main, stable]
+    paths:
+      - "**/*.py"
+      - "**/*.pyi"
+      - ".github/workflows/type-check.yml"
+      - "pyproject.toml"
+      - "uv.lock"
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  run_type-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "windows-latest"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "latest"
+          python-version: ${{ env.PYTHON_VERSION }}
+          enable-cache: true
+
+      - name: Cache uv dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: uv-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ hashFiles('uv.lock', 'pyproject.toml') }}
+
+      - name: Setup Ubuntu dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y --no-install-recommends git cmake build-essential pkg-config libevdev-dev
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Check installed packages
+        run: |
+          echo "Python version:"
+          uv run python -V
+          echo "All installed packages:"
+          uv pip list
+
+      - name: Run pyright
+        run: uv run pyright

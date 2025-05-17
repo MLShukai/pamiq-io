@@ -1,0 +1,26 @@
+services:
+  dev:
+    image: pamiq-io:${USER}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - pamiq-io:/workspace
+      - uv_cache:/root/.cache/uv
+      - pip_cache:/root/.cache/pip
+      - pre-commit_cache:/root/.cache/pre-commit
+    environment:
+      - PYRIGHT_PYTHON_FORCE_VERSION=latest
+    tty: true
+    stdin_open: true
+    privileged: true
+    working_dir: /workspace
+    command: /bin/bash
+    stop_grace_period: 0s
+
+volumes:
+  pamiq-io:
+    name: pamiq-io
+  uv_cache:
+  pip_cache:
+  pre-commit_cache:

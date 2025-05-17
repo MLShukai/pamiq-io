@@ -11,43 +11,48 @@
 - 🎤 Audio input/output via SoundCard
 - 📹 Video input via OpenCV
 - 🎛️ OSC (Open Sound Control) communication
-- ⌨️ Keyboard simulation
-- 🖱️ Mouse simulation
+- ⌨️ Keyboard simulation (Inputtino on Linux, DirectInput on Windows)
+- 🖱️ Mouse simulation (Inputtino on Linux, DirectInput on Windows)
 
 ## 🔧 Requirements
 
 - Python 3.12+
-- Linux (due to Inputtino and other dependencies)
+- Platform-specific dependencies:
+  - **Linux**: Inputtino (for keyboard/mouse simulation)
+  - **Windows**: PyDirectInput (for keyboard/mouse simulation)
 - OBS Studio (for video capture)
-- PulseAudio (for audio)
 
 ## 📦 Installation
 
 ### Using pip
-
-**For keyboard and mouse output, you must first install [inputtino](https://github.com/games-on-whales/inputtino/tree/stable/bindings/python).**
 
 ```bash
 # Install the base package
 pip install pamiq-io
 
 # Install with optional dependencies as needed
-pip install pamiq-io[inputtino]    # For keyboard and mouse output
-pip install pamiq-io[opencv]       # For video input
-pip install pamiq-io[osc]          # For OSC communication
-pip install pamiq-io[soundcard]    # For audio input/output
+pip install pamiq-io[opencv]       # For video input (all platforms)
+pip install pamiq-io[osc]          # For OSC communication (all platforms)
+pip install pamiq-io[soundcard]    # For audio input/output (all platforms)
+
+# Platform-specific input simulation:
+# For Linux:
+pip install pamiq-io[inputtino]    # For keyboard and mouse output on Linux
+
+# For Windows:
+pip install pamiq-io[directinput]  # For keyboard and mouse output on Windows
 
 # For running demo scripts
-sudo apt install libsndfile1
 pip install pamiq-io[demo]
 ```
+
+### Linux-specific setup
+
+**For keyboard and mouse output on Linux, you must first install [inputtino](https://github.com/games-on-whales/inputtino/tree/stable/bindings/python).**
 
 ### Development installation
 
 ```bash
-# Install build dependencies
-sudo apt install git cmake build-essential pkg-config libevdev-dev libsndfile1
-
 # Clone and setup
 git clone https://github.com/MLShukai/pamiq-io.git
 cd pamiq-io
@@ -76,18 +81,18 @@ pamiq-io-show-soundcard-available-output-devices
 1. Install OBS Studio following the official installation instructions:
 
    - Visit [https://obsproject.com](https://obsproject.com)
-   - Follow the installation guide for Linux (typically using a PPA for Ubuntu-based distributions)
+   - Follow the installation guide for your platform (Windows or Linux)
 
-2. If the virtual camera functionality is not available after installing OBS, you may need to install v4l2loopback:
+2. In OBS, start the virtual camera (Tools → Start Virtual Camera)
+
+3. Linux-specific: If the virtual camera functionality is not available after installing OBS on Linux, you may need to install v4l2loopback:
 
    ```bash
    sudo apt install v4l2loopback-dkms
    sudo modprobe v4l2loopback
    ```
 
-3. In OBS, start the virtual camera (Tools → Start Virtual Camera)
-
-4. (Optional) To find the virtual camera device, you can install v4l-utils:
+   To find the virtual camera device, you can install v4l-utils:
 
    ```bash
    sudo apt install v4l-utils
@@ -96,7 +101,7 @@ pamiq-io-show-soundcard-available-output-devices
 
 ## 🐳 Docker
 
-A Docker configuration is provided for easy development and deployment.
+A Docker configuration is provided for easy development and deployment on Linux.
 
 ### Basic usage:
 
@@ -131,7 +136,7 @@ docker run --privileged -it your-pamiq-image
 > \[!IMPORTANT\]
 > ⚠️ **Note**: The `--privileged` flag is required for hardware access to input devices.
 
-### PulseAudio in Docker
+### PulseAudio in Docker (Linux host only)
 
 To use audio inside Docker, you need to set up PulseAudio properly:
 
@@ -217,10 +222,10 @@ osc_input.start(blocking=False)
 
 ### Keyboard Simulation
 
-#### Inputtino
+#### Linux (Inputtino)
 
 ```python
-# If inputtino is installed:
+# Linux only - if inputtino is installed:
 from pamiq_io.keyboard import Key, InputtinoKeyboardOutput
 
 # Using the InputtinoKeyboardOutput implementation
@@ -229,16 +234,41 @@ keyboard.press(Key.CTRL, Key.C)  # Press Ctrl+C
 keyboard.release(Key.CTRL, Key.C)  # Release Ctrl+C
 ```
 
-### Mouse Simulation
-
-#### Inputtino
+#### Windows (DirectInput)
 
 ```python
-# If inputtino is installed:
+# Windows only - if directinput is installed:
+from pamiq_io.keyboard import Key, DirectInputKeyboardOutput
+
+# Using the DirectInputKeyboardOutput implementation
+keyboard = DirectInputKeyboardOutput()
+keyboard.press(Key.CTRL, Key.C)  # Press Ctrl+C
+keyboard.release(Key.CTRL, Key.C)  # Release Ctrl+C
+```
+
+### Mouse Simulation
+
+#### Linux (Inputtino)
+
+```python
+# Linux only - if inputtino is installed:
 from pamiq_io.mouse import MouseButton, InputtinoMouseOutput
 
 # Using the InputtinoMouseOutput implementation
 mouse = InputtinoMouseOutput(fps=100)
+mouse.move(100, 50)  # Move 100 pixels/sec right, 50 pixels/sec down
+mouse.press(MouseButton.LEFT)
+mouse.release(MouseButton.LEFT)
+```
+
+#### Windows (DirectInput)
+
+```python
+# Windows only - if directinput is installed:
+from pamiq_io.mouse import MouseButton, DirectInputMouseOutput
+
+# Using the DirectInputMouseOutput implementation
+mouse = DirectInputMouseOutput()
 mouse.move(100, 50)  # Move 100 pixels/sec right, 50 pixels/sec down
 mouse.press(MouseButton.LEFT)
 mouse.release(MouseButton.LEFT)
@@ -259,9 +289,14 @@ python demos/opencv_video_input.py --camera 0 --output frame.png
 # OSC demos (requires pamiq-io[osc])
 python demos/osc_io.py
 
-# Input simulation demos (requires pamiq-io[inputtino])
+# Input simulation demos
+# Linux, requires pamiq-io[inputtino]
 python demos/inputtino_keyboard_output.py
 python demos/inputtino_mouse_output.py --radius 100 --duration 5
+
+# Windows, requires pamiq-io[directinput]
+python demos/directinput_keyboard_output.py
+python demos/directinput_mouse_output.py --radius 100 --duration 5
 ```
 
 ## 📝 License

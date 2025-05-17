@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-"""Demo script for InputtinoKeyboardOutput.
+"""Demo script for DirectInputKeyboardOutput.
 
 This script demonstrates basic keyboard input simulation by pressing and
 releasing W, A, S, D keys sequentially with a 1-second delay.
@@ -7,14 +6,14 @@ releasing W, A, S, D keys sequentially with a 1-second delay.
 
 import sys
 
-if sys.platform != "linux":
-    print("This script only runs on Linux. Exiting...")
+if sys.platform != "win32":
+    print("This script only runs on Windows. Exiting...")
     sys.exit(1)
 
 import logging
 import time
 
-from pamiq_io.keyboard import InputtinoKeyboardOutput, Key
+from pamiq_io.keyboard import DirectInputKeyboardOutput, Key
 
 
 def setup_logging() -> None:
@@ -40,7 +39,7 @@ def main() -> None:
         time.sleep(1)
 
     # Initialize the keyboard output
-    keyboard = InputtinoKeyboardOutput()
+    keyboard = DirectInputKeyboardOutput()
 
     # Define the sequence of keys to press
     keys = [Key.W, Key.A, Key.S, Key.D]

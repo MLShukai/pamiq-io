@@ -23,3 +23,40 @@ type: ## Run pyright
 	uv run pyright
 
 run: format test type ## Run all workflow
+
+# -----------------
+#  Docker Settings
+# -----------------
+
+ENABLE_AUDIO ?= true
+
+# Compose files
+BASE_COMPOSE  := -f docker-compose.yml
+PULSEAUDIO_COMPOSE := -f docker-compose.pulseaudio.yml
+
+# Auto-detection capabilities.
+HAS_PULSEAUDIO := $(shell pactl info > /dev/null 2>&1 && echo true || echo false)
+
+# -f options
+ifeq ($(ENABLE_AUDIO),true)
+  ifeq ($(HAS_PULSEAUDIO),true)
+    COMPOSE_FILES += $(PULSEAUDIO_COMPOSE)
+  endif
+endif
+
+docker-build: ## Build docker images
+	docker compose $(BASE_COMPOSE) build --no-cache
+
+docker-up: ## Start docker containers (ENABLE_GPU=false to disable GPU, ENABLE_AUDIO=false to disable audio)
+	@echo "→ Starting dev container"
+	@echo "  Audio: $(ENABLE_AUDIO) (detected: PulseAudio: $(HAS_PULSEAUDIO))"
+	docker compose $(COMPOSE_FILES) up -d
+
+docker-down: ## Stop docker containers
+	docker compose $(BASE_COMPOSE) down
+
+docker-down-volume:  ## Stop docker containers with removing volumes.
+	docker compose $(BASE_COMPOSE) down -v
+
+docker-attach: ## Attach to development container
+	docker compose $(BASE_COMPOSE) exec dev bash
