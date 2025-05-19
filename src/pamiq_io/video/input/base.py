@@ -2,8 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-import numpy as np
-from numpy.typing import NDArray
+from ..utils import VideoFrame
 
 
 class VideoInput(ABC):
@@ -13,7 +12,7 @@ class VideoInput(ABC):
     """
 
     @abstractmethod
-    def read(self) -> NDArray[np.uint8]:
+    def read(self) -> VideoFrame:
         """Reads a frame from the video input.
 
         Returns:
