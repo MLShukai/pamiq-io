@@ -73,7 +73,7 @@ osc = [
 soundcard = [
     "soundcard>=0.4.4",
 ]
-directinput = [
+windows = [
     "pydirectinput>=1.0.4;sys_platform=='win32'",
 ]
 

@@ -1,4 +1,4 @@
-"""Demo script for DirectInputMouseOutput.
+"""Demo script for WindowsMouseOutput.
 
 This script demonstrates mouse movement by drawing a circle with the
 cursor over 5 seconds.
@@ -15,7 +15,7 @@ import logging
 import math
 import time
 
-from pamiq_io.mouse import DirectInputMouseOutput
+from pamiq_io.mouse import WindowsMouseOutput
 
 
 def setup_logging() -> None:
@@ -72,7 +72,7 @@ def main() -> None:
         time.sleep(1)
 
     # Initialize the mouse output with specified fps
-    mouse = DirectInputMouseOutput(fps=args.fps)
+    mouse = WindowsMouseOutput(fps=args.fps)
 
     # Parameters
     radius = args.radius

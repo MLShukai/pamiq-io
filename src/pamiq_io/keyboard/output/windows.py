@@ -1,4 +1,4 @@
-"""Keyboard output module for simulating keyboard inputs with DirectInput on
+"""Keyboard output module for simulating keyboard inputs with Windows on
 Windows."""
 
 import sys
@@ -32,21 +32,21 @@ if sys.platform == "win32":
         Key.QUOTE: "'",
     }
 
-    class DirectInputKeyboardOutput(KeyboardOutput):
-        """Keyboard output implementation for Windows using DirectInput.
+    class WindowsKeyboardOutput(KeyboardOutput):
+        """Keyboard output implementation for Windows.
 
         This class provides a high-level interface for simulating keyboard inputs
         using pydirectinput library.
 
         Examples:
-            >>> from pamiq_io.keyboard import DirectInputKeyboardOutput
-            >>> keyboard = DirectInputKeyboardOutput()
+            >>> from pamiq_io.keyboard import WindowsKeyboardOutput
+            >>> keyboard = WindowsKeyboardOutput()
             >>> keyboard.press(Key.CTRL, Key.C)  # Press Ctrl+C
             >>> keyboard.release(Key.CTRL, Key.C)  # Release Ctrl+C
         """
 
         def __init__(self) -> None:
-            """Initialize the DirectInputKeyboardOutput.
+            """Initialize the WindowsKeyboardOutput.
 
             Creates a keyboard controller using pydirectinput to handle
             the actual keyboard simulation.

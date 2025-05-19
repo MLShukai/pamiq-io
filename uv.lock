@@ -224,9 +224,6 @@ demo = [
     { name = "pillow" },
     { name = "soundfile" },
 ]
-directinput = [
-    { name = "pydirectinput", marker = "sys_platform == 'win32'" },
-]
 inputtino = [
     { name = "inputtino-python", marker = "sys_platform == 'linux'" },
 ]
@@ -238,6 +235,9 @@ osc = [
 ]
 soundcard = [
     { name = "soundcard" },
+]
+windows = [
+    { name = "pydirectinput", marker = "sys_platform == 'win32'" },
 ]
 
 [package.dev-dependencies]
@@ -254,7 +254,7 @@ requires-dist = [
     { name = "inputtino-python", marker = "sys_platform == 'linux' and extra == 'inputtino'", git = "https://github.com/games-on-whales/inputtino.git?subdirectory=bindings%2Fpython" },
     { name = "opencv-python", marker = "extra == 'opencv'", specifier = ">=4.11.0.86" },
     { name = "pillow", marker = "extra == 'demo'", specifier = ">=11.1.0" },
-    { name = "pydirectinput", marker = "sys_platform == 'win32' and extra == 'directinput'", specifier = ">=1.0.4" },
+    { name = "pydirectinput", marker = "sys_platform == 'win32' and extra == 'windows'", specifier = ">=1.0.4" },
     { name = "python-osc", marker = "extra == 'osc'", specifier = ">=1.9.3" },
     { name = "soundcard", marker = "extra == 'soundcard'", specifier = ">=0.4.4" },
     { name = "soundfile", marker = "extra == 'demo'", specifier = ">=0.13.1" },
