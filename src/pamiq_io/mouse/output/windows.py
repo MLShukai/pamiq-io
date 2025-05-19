@@ -1,5 +1,4 @@
-"""Mouse output module for simulating mouse inputs with DirectInput on
-Windows."""
+"""Mouse output module for simulating mouse inputs with Windows on Windows."""
 
 import sys
 
@@ -12,16 +11,16 @@ if sys.platform == "win32":
 
     from .base import MouseButton, MouseOutput
 
-    class DirectInputMouseOutput(MouseOutput):
-        """Mouse output implementation for Windows using DirectInput.
+    class WindowsMouseOutput(MouseOutput):
+        """Mouse output implementation for Windows using Windows.
 
         This class provides a high-level interface for simulating mouse movements
         and button actions using pydirectinput. It uses a background thread
         to create smooth mouse movements based on specified velocities.
 
         Examples:
-            >>> from pamiq_io.mouse import DirectInputMouseOutput
-            >>> mouse = DirectInputMouseOutput()
+            >>> from pamiq_io.mouse import WindowsMouseOutput
+            >>> mouse = WindowsMouseOutput()
             >>> mouse.move(100, 50)  # Move mouse at 100px/s right, 50px/s down
             >>> mouse.press(MouseButton.LEFT)  # Press left mouse button
             >>> mouse.release(MouseButton.LEFT)  # Release left mouse button
@@ -29,7 +28,7 @@ if sys.platform == "win32":
 
         @override
         def __init__(self, fps: float = 60.0) -> None:
-            """Initialize the DirectInputMouseOutput.
+            """Initialize the WindowsMouseOutput.
 
             Creates a mouse controller using pydirectinput and starts a background
             thread for smooth movement.
@@ -73,13 +72,13 @@ if sys.platform == "win32":
 
         @staticmethod
         def convert_to_directinput_button(button: MouseButton) -> str:
-            """Convert a MouseButton enum value to a DirectInput button string.
+            """Convert a MouseButton enum value to a Windows button string.
 
             Args:
                 button: The button to convert.
 
             Returns:
-                The corresponding DirectInput button string.
+                The corresponding Windows button string.
             """
             # pydirectinput uses lowercase button names as strings
             match button:

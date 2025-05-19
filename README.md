@@ -11,15 +11,14 @@
 - 🎤 Audio input/output via SoundCard
 - 📹 Video input via OpenCV
 - 🎛️ OSC (Open Sound Control) communication
-- ⌨️ Keyboard simulation (Inputtino on Linux, DirectInput on Windows)
-- 🖱️ Mouse simulation (Inputtino on Linux, DirectInput on Windows)
+- ⌨️ Keyboard simulation (Linux and Windows)
+- 🖱️ Mouse simulation (Linux and Windows)
 
 ## 🔧 Requirements
 
 - Python 3.12+
 - Platform-specific dependencies:
   - **Linux**: Inputtino (for keyboard/mouse simulation)
-  - **Windows**: PyDirectInput (for keyboard/mouse simulation)
 - OBS Studio (for video capture)
 
 ## 📦 Installation
@@ -40,7 +39,7 @@ pip install pamiq-io[soundcard]    # For audio input/output (all platforms)
 pip install pamiq-io[inputtino]    # For keyboard and mouse output on Linux
 
 # For Windows:
-pip install pamiq-io[directinput]  # For keyboard and mouse output on Windows
+pip install pamiq-io[windows]  # For keyboard and mouse output on Windows
 
 # For running demo scripts
 pip install pamiq-io[demo]
@@ -234,14 +233,13 @@ keyboard.press(Key.CTRL, Key.C)  # Press Ctrl+C
 keyboard.release(Key.CTRL, Key.C)  # Release Ctrl+C
 ```
 
-#### Windows (DirectInput)
+#### Windows
 
 ```python
-# Windows only - if directinput is installed:
-from pamiq_io.keyboard import Key, DirectInputKeyboardOutput
+from pamiq_io.keyboard import Key, WindowsKeyboardOutput
 
-# Using the DirectInputKeyboardOutput implementation
-keyboard = DirectInputKeyboardOutput()
+# Using the WindowsKeyboardOutput implementation
+keyboard = WindowsKeyboardOutput()
 keyboard.press(Key.CTRL, Key.C)  # Press Ctrl+C
 keyboard.release(Key.CTRL, Key.C)  # Release Ctrl+C
 ```
@@ -261,14 +259,13 @@ mouse.press(MouseButton.LEFT)
 mouse.release(MouseButton.LEFT)
 ```
 
-#### Windows (DirectInput)
+#### Windows
 
 ```python
-# Windows only - if directinput is installed:
-from pamiq_io.mouse import MouseButton, DirectInputMouseOutput
+from pamiq_io.mouse import MouseButton, WindowsMouseOutput
 
-# Using the DirectInputMouseOutput implementation
-mouse = DirectInputMouseOutput()
+# Using the WindowsMouseOutput implementation
+mouse = WindowsMouseOutput()
 mouse.move(100, 50)  # Move 100 pixels/sec right, 50 pixels/sec down
 mouse.press(MouseButton.LEFT)
 mouse.release(MouseButton.LEFT)
@@ -294,9 +291,9 @@ python demos/osc_io.py
 python demos/inputtino_keyboard_output.py
 python demos/inputtino_mouse_output.py --radius 100 --duration 5
 
-# Windows, requires pamiq-io[directinput]
-python demos/directinput_keyboard_output.py
-python demos/directinput_mouse_output.py --radius 100 --duration 5
+# Windows, requires pamiq-io[windows]
+python demos/windows_keyboard_output.py
+python demos/windows_mouse_output.py --radius 100 --duration 5
 ```
 
 ## 📝 License

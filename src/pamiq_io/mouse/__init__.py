@@ -14,8 +14,8 @@ if sys.platform == "linux":
 
 if sys.platform == "win32":
     try:
-        from .output.directinput import DirectInputMouseOutput
+        from .output.windows import WindowsMouseOutput
 
-        __all__.extend(["DirectInputMouseOutput"])
+        __all__.extend(["WindowsMouseOutput"])
     except ModuleNotFoundError:
         pass

@@ -57,9 +57,9 @@ jobs:
               echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
               python ./script.py
 
-          - dependency: directinput
-            install: python -m pip install .[directinput]
-            import: echo "DirectInput dependency installed successfully"
+          - dependency: windows
+            install: python -m pip install .[windows]
+            import: echo "Windows dependency installed successfully"
 
     steps:
       - uses: actions/checkout@v4
@@ -109,11 +109,11 @@ jobs:
               echo "from pamiq_io.audio import SoundcardAudioInput, SoundcardAudioOutput" > script.py
               python ./script.py
 
-          - dependency: directinput
-            install: python -m pip install .[directinput]
+          - dependency: windows
+            install: python -m pip install .[windows]
             import: |
-              python -c "from pamiq_io.mouse import DirectInputMouseOutput"
-              python -c "from pamiq_io.keyboard import DirectInputKeyboardOutput"
+              python -c "from pamiq_io.mouse import WindowsMouseOutput"
+              python -c "from pamiq_io.keyboard import WindowsKeyboardOutput"
 
     steps:
       - uses: actions/checkout@v4
