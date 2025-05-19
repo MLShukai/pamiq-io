@@ -4,10 +4,9 @@ io."""
 import logging
 from typing import override
 
-import numpy as np
 import soundcard as sc
-from numpy.typing import NDArray
 
+from ..utils import AudioFrame
 from .base import AudioOutput
 
 
@@ -111,7 +110,7 @@ class SoundcardAudioOutput(AudioOutput):
         return self._channels
 
     @override
-    def write(self, data: NDArray[np.float32]) -> None:
+    def write(self, data: AudioFrame) -> None:
         """Writes audio frames to the output stream.
 
         Args:
@@ -121,9 +120,6 @@ class SoundcardAudioOutput(AudioOutput):
         Raises:
             ValueError: If the data shape is incompatible with the configured channels.
         """
-        # Ensure data is float32
-        data = np.asarray(data, dtype=np.float32)
-
         # Check shape compatibility
         if data.ndim == 1:
             # Single channel data, reshape to (frames, 1)

@@ -1,13 +1,12 @@
 """This module provides OpenCV-based video input implementation."""
 
 import logging
-from typing import TypedDict, override
+from typing import TypedDict, cast, override
 
 import cv2
 import numpy as np
-from numpy.typing import NDArray
 
-from .base import VideoInput
+from .base import VideoFrame, VideoInput
 
 
 class DeviceInfo(TypedDict):
@@ -215,7 +214,7 @@ class OpenCVVideoInput(VideoInput):
         return float(self.camera.get(cv2.CAP_PROP_FPS))
 
     @override
-    def read(self) -> NDArray[np.uint8]:
+    def read(self) -> VideoFrame:
         """Reads a frame from the video input.
 
         Returns:
@@ -232,6 +231,9 @@ class OpenCVVideoInput(VideoInput):
                 if frame.ndim == 2:
                     frame = np.expand_dims(frame, -1)
 
+                if frame.ndim != 3:
+                    raise ValueError("Retrieved video frame must be 2d or 3d.")
+
                 # Verify that the frame has the expected number of channels
                 if frame.shape[-1] != self.expected_channels:
                     raise ValueError(
@@ -244,7 +246,7 @@ class OpenCVVideoInput(VideoInput):
                 elif frame.shape[-1] == 4:
                     frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2RGBA)
 
-                return np.asarray(frame, dtype=np.uint8, copy=False)
+                return cast(VideoFrame, np.asarray(frame, dtype=np.uint8, copy=False))
             else:
                 self.logger.warning(
                     f"Failed to read input frame, retrying ({i+1}/{self.num_trials_on_read_failure})..."
