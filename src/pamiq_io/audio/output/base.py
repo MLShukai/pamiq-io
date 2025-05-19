@@ -2,8 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-import numpy as np
-from numpy.typing import NDArray
+from ..utils import AudioFrame
 
 
 class AudioOutput(ABC):
@@ -13,7 +12,7 @@ class AudioOutput(ABC):
     """
 
     @abstractmethod
-    def write(self, data: NDArray[np.float32]) -> None:
+    def write(self, data: AudioFrame) -> None:
         """Writes audio frames to the output stream.
 
         Args:
