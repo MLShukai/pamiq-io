@@ -1,4 +1,4 @@
-"""Tests for the DirectInputMouseOutput class."""
+"""Tests for the WindowsMouseOutput class."""
 
 from tests.helpers import skip_if_platform_is_not_windows
 
@@ -7,16 +7,16 @@ skip_if_platform_is_not_windows()
 import pytest
 from pytest_mock import MockerFixture
 
-from pamiq_io.mouse.output.directinput import DirectInputMouseOutput, MouseButton
+from pamiq_io.mouse.output.windows import MouseButton, WindowsMouseOutput
 
 
-class TestDirectInputMouseOutput:
-    """Tests for the DirectInputMouseOutput class."""
+class TestWindowsMouseOutput:
+    """Tests for the WindowsMouseOutput class."""
 
     @pytest.fixture
     def mock_directinput(self, mocker: MockerFixture):
         """Create a mock for the pydirectinput module."""
-        mock = mocker.patch("pamiq_io.mouse.output.directinput.pydirectinput")
+        mock = mocker.patch("pamiq_io.mouse.output.windows.pydirectinput")
         # Set up PRIMARY and SECONDARY attributes
         mock.PRIMARY = "x1"
         mock.SECONDARY = "x2"
@@ -25,38 +25,37 @@ class TestDirectInputMouseOutput:
     def test_init_sets_pause(self, mock_directinput):
         """Test that init properly sets pydirectinput.PAUSE."""
         fps = 30.0
-        DirectInputMouseOutput(fps=fps)
+        WindowsMouseOutput(fps=fps)
         assert mock_directinput.PAUSE == 1 / fps
 
     def test_convert_to_directinput_button(self, mock_directinput):
-        """Test converting to DirectInput button strings."""
+        """Test converting to Windows button strings."""
         # Test regular buttons
         assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.LEFT)
-            == "left"
+            WindowsMouseOutput.convert_to_directinput_button(MouseButton.LEFT) == "left"
         )
         assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.RIGHT)
+            WindowsMouseOutput.convert_to_directinput_button(MouseButton.RIGHT)
             == "right"
         )
         assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.MIDDLE)
+            WindowsMouseOutput.convert_to_directinput_button(MouseButton.MIDDLE)
             == "middle"
         )
 
         # Test special case buttons
         assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.SIDE)
+            WindowsMouseOutput.convert_to_directinput_button(MouseButton.SIDE)
             == mock_directinput.PRIMARY
         )
         assert (
-            DirectInputMouseOutput.convert_to_directinput_button(MouseButton.EXTRA)
+            WindowsMouseOutput.convert_to_directinput_button(MouseButton.EXTRA)
             == mock_directinput.SECONDARY
         )
 
     def test_press(self, mock_directinput):
         """Test pressing a mouse button."""
-        mouse_output = DirectInputMouseOutput()
+        mouse_output = WindowsMouseOutput()
 
         # Test with standard button
         mouse_output.press(MouseButton.RIGHT)
@@ -68,7 +67,7 @@ class TestDirectInputMouseOutput:
 
     def test_release(self, mock_directinput):
         """Test releasing a mouse button."""
-        mouse_output = DirectInputMouseOutput()
+        mouse_output = WindowsMouseOutput()
 
         # Test with standard button
         mouse_output.release(MouseButton.MIDDLE)

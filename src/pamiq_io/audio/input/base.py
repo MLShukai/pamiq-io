@@ -2,8 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-import numpy as np
-from numpy.typing import NDArray
+from ..utils import AudioFrame
 
 
 class AudioInput(ABC):
@@ -13,7 +12,7 @@ class AudioInput(ABC):
     """
 
     @abstractmethod
-    def read(self, frame_size: int) -> NDArray[np.float32]:
+    def read(self, frame_size: int) -> AudioFrame:
         """Reads audio frames from the input stream.
 
         Args:

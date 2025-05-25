@@ -14,8 +14,8 @@ if sys.platform == "linux":
 
 if sys.platform == "win32":
     try:
-        from .output.directinput import DirectInputKeyboardOutput
+        from .output.windows import WindowsKeyboardOutput
 
-        __all__.extend(["DirectInputKeyboardOutput"])
+        __all__.extend(["WindowsKeyboardOutput"])
     except ModuleNotFoundError:
         pass

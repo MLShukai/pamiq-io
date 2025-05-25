@@ -1,12 +1,11 @@
 """This module provides audio input functionality for game-io."""
 
 import logging
-from typing import override
+from typing import cast, override
 
-import numpy as np
 import soundcard as sc
-from numpy.typing import NDArray
 
+from ..utils import AudioFrame
 from .base import AudioInput
 
 
@@ -110,7 +109,7 @@ class SoundcardAudioInput(AudioInput):
         return self._channels
 
     @override
-    def read(self, frame_size: int) -> NDArray[np.float32]:
+    def read(self, frame_size: int) -> AudioFrame:
         """Reads audio frames from the input stream.
 
         Args:
@@ -124,7 +123,9 @@ class SoundcardAudioInput(AudioInput):
             RuntimeError: If the audio frames cannot be read.
         """
         frames = self._stream.record(numframes=frame_size)
-        return np.asarray(frames, dtype=np.float32)
+        if frames.ndim != 2:
+            raise ValueError("Retrieved data is not 2d array.")
+        return cast(AudioFrame, frames)
 
     def __del__(self) -> None:
         """Cleanup method to properly close the audio stream when the object is
