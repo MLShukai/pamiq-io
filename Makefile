@@ -34,6 +34,7 @@ ENABLE_AUDIO ?= true
 BASE_COMPOSE  := -f docker-compose.yml
 PULSEAUDIO_COMPOSE := -f docker-compose.pulseaudio.yml
 
+COMPOSE_FILES := $(BASE_COMPOSE)
 # Auto-detection capabilities.
 HAS_PULSEAUDIO := $(shell pactl info > /dev/null 2>&1 && echo true || echo false)
 
