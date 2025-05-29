@@ -38,7 +38,7 @@ if sys.platform == "win32":
             """
             super().__init__()
             self._interval = 1 / fps
-            pydirectinput.PAUSE = self._interval
+            pydirectinput.PAUSE = 0
 
             # Current movement speed (pixels per second)
             self._dx = 0.0
