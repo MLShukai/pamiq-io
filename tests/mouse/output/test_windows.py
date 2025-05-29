@@ -24,9 +24,8 @@ class TestWindowsMouseOutput:
 
     def test_init_sets_pause(self, mock_directinput):
         """Test that init properly sets pydirectinput.PAUSE."""
-        fps = 30.0
-        WindowsMouseOutput(fps=fps)
-        assert mock_directinput.PAUSE == 1 / fps
+        WindowsMouseOutput()
+        assert mock_directinput.PAUSE == 0
 
     def test_convert_to_directinput_button(self, mock_directinput):
         """Test converting to Windows button strings."""
