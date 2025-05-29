@@ -1,6 +1,6 @@
 [project]
 name = "pamiq-io"
-version = "0.6.0"
+version = "0.6.1"
 description = "Versatile I/O library for Python, providing easy access to audio, video, and input device capabilities."
 readme = "README.md"
 authors = [
